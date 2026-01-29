@@ -1,0 +1,148 @@
+//annotated
+//indicates that user made a note in the transcript about the current page/movie
+var xannotated={
+	"verb":"http://risc-inc.com/annotator/verbs/annotated",
+	"verbDisplay":{"en-US":"annotated"}
+};
+
+
+//answered
+//indicates that answer was submitted from question page
+//sent with isCorrect (true/false)
+var xanswered = {
+	"verb":"http://adlnet.gov/expapi/verbs/answered",
+			"verbDisplay":  {"en-US" : "answered"}
+};
+
+
+
+//completed
+//indicated that end of movie was reached
+var xcompleted = {
+	"verb":"http://adlnet.gov/expapi/verbs/completed",
+			"verbDisplay":  {"en-US" : "completed"}
+};
+
+//experienced
+//indicates that page or movie loaded
+var xexperienced = {
+	"verb":"http://adlnet.gov/expapi/verbs/experienced",
+				"verbDisplay":  {"en-US" : "experienced"},
+};
+
+//failed
+//indicates that quiz was submitted with failing score
+//sent with wrong answers included in object and resultScore included
+var xfailed = {
+		"verb":"http://adlnet.gov/expapi/verbs/failed",
+		"verbDisplay":  {"en-US" : "failed"}
+};
+
+//favorited
+//indicates that user has marked a movie/page as a favorited
+var xfavorited = {
+	"verb":"http://activitystrea.ms/schema/1.0/favorite",
+	"verbDisplay":{"en-US" : "favorited"}
+};
+
+
+
+//initialized
+//indicates that main lesson page loaded (bc_ewinjr or index)
+var xinitialized = {
+	"verb":"http://adlnet.gov/expapi/verbs/initialized",
+			"verbDisplay":  {"en-US" : "initialized"}
+};
+
+//initialized
+//indicates that feature was opened/clicked/etc
+var xinteracted = {
+	"verb":"http://adlnet.gov/expapi/verbs/interacted",
+				"verbDisplay":  {"en-US" : "interacted"}
+};
+
+
+//modified annotation
+//indicates that user has modified an annotation
+var xmodified={
+	"verb":"http://risc-inc.com/annotator/verbs/modified",
+	"verbDisplay":{"en-US":"modified annotation"}
+	
+};
+
+//opened 
+//indicates that a user opened a print document
+var xopened =  {
+      "verb": "https://w3id.org/xapi/dod-isd/verbs/opened",
+      "verbDisplay": {"en-US": "opened"}
+	  
+};
+
+//passed
+//indicates that quiz was submitted with passing score
+//send with resultScore
+var xpassed = {"verb":"http://adlnet.gov/expapi/verbs/passed",
+			"verbDisplay":  {"en-US" : "passed"}
+};	
+
+//progressed
+//indicates percentage of lesson or course that user has experienced
+var xprogressed = {
+	"verb":"http://adlnet.gov/expapi/verbs/progressed",
+	"verbDisplay":{"en-US":"progressed"}
+};
+
+//resumed
+//indicates that lesson was re-started with the Resume button
+var xresumed = {	"verb":"http://adlnet.gov/expapi/verbs/resumed",
+			"verbDisplay":  {"en-US" : "resumed"}
+};
+
+//responded
+//indicates that the user filled out the course survey
+var xresponded = {	"verb":"https://adlnet.gov/expapi/verbs/responded/",
+			"verbDisplay":  {"en-US" : "responded"}
+};
+
+//satisfied
+//indicates that lesson marked as "complete"-- quiz passed or end of lesson reached,
+//or all required topics completed
+var xsatisfied = {
+		"verb":"https://w3id.org/xapi/adl/verbs/satisfied",
+			"verbDisplay":  {"en-US" : "satisfied (finished) lesson"}
+};
+
+//searched
+//indicates that user entered a search term
+//sent with search term included in the object
+var xsearched = {"verb":"https://w3id.org/xapi/acrossx/verbs/searched",
+			"verbDisplay":  {"en-US" : "searched"}
+};
+
+//started
+//indicates that lesson was started with the Start button
+var xstarted = {"verb":"http://activitystrea.ms/schema/1.0/start",
+			"verbDisplay":  {"en-US" : "started"}
+};
+
+//unfavorited
+//indicates that a user has unfavorited a movie/page that had beed previously favorited.
+var xunfavorited = {
+	"verb":"http://activitystrea.ms/schema/1.0/unfavorite",
+	"verbDisplay":{"en-US": "unfavorited"}
+	
+};
+
+//updated
+//indicates that user had to update profile data in order to reseafter lesson loaded
+var xupdated = {
+	"verb": "http://activitystrea.ms/schema/1.0/update",
+	"verbDisplay":{"en-US":"updated"}
+}
+
+//used
+//indicates that user opened and took an action from the debug window
+var xused = {
+	"verb": "http://activitystrea.ms/schema/1.0/use",
+	"verbDisplay":{"en-US":"used"}
+}

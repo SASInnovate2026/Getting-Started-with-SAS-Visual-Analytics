@@ -1,0 +1,4837 @@
+// JavaScript Document
+
+/*!
+ *
+ * global variables.
+ *
+ */
+
+var host = window.location.host; 
+var myCourseType, suffix; //suffix NOT USED? myCourseType used only in checking questions, for practiceExam
+var copyrightyear = "2025";
+
+var pv_copyrite = '<font size="1" color="#484848" face="Arial, Helvetica, sans-serif">Copyright &copy; ' + copyrightyear + ' SAS Institute Inc., Cary, NC, USA. All rights reserved.</font>';
+var pv_copyrite_acc = '<font size="3" color="white" face="Arial, Helvetica, sans-serif">Copyright &copy; ' + copyrightyear + ' SAS Institute Inc., Cary, NC, USA. All rights reserved.</font>';
+
+var rc_copyrite = '<font size="1" color="white" face="Arial, Helvetica, sans-serif"><a class="copyrightlink" href="Javascript: openOther(\'copyrite_rc.htm\')" target="_blank">Copyright</a> &copy; ' + copyrightyear + ' SAS Institute Inc., Cary, NC, USA. All rights reserved. <a class="copyrightlink" href="http://www.sas.com/Privacy.html" target="_blank">Privacy Statement</a></font>';
+var containerTitle = '<title>SAS e-Course: ' + eTitle + '</title>';
+var printNarrLink = '<button onClick="Javascript: print();">Print</button>';
+var SASlogoWht = '<img src="rc_common/sas_logo_rc.png" alt="SAS logo">';
+var SASlogoPop = '<img src="saslogo_pop.png" alt="SAS logo">';
+var SASlogoPop_toplev ='<img src="rc_common/saslogo_pop.png" alt="SAS logo">';
+
+var myMovie = ""; // same as myObjectID?
+var myMovieNumber;
+var eCodeLC = eCode.toLowerCase();
+var SCORMcourse = false;
+var VLEcourse = false;
+var mylessonString ;//set in showmoviediv - eg epg1v201
+var currentSelect = "";//used for multi-option topics
+var mySCO = "";//set in showmoviediv - eg 01 - same as mylessonx but on
+var SCOfirst; // first movie of the SCO/lesson - for true scorm
+var SCOlast; // last movie of the SCO/lesson - for true scorm
+var testarea = false;
+var numLessons = eval("lessonTitles").length;
+if(typeof myfam=="undefined")var familycode = "unknown"; 
+else if(myfam != "") var familycode = myfam;
+else var familycode = "unknown";
+
+
+var eCourseX=[];
+var courseMoviesComplete = 0; // used for encouragement msgs - not stored
+var courseReqMoviesComplete = 0; //used for cprog
+
+var lessonMoviesComplete = ["00", 0]; // used for encouragement msgs - not stored
+var dataLoaded = "no"; // used in initial tracking load
+//var noTrackOK = false;
+if(typeof versNum == "undefined"){
+	if(typeof myCvers != "undefined" && myCvers !="") var versNum = myCvers;
+	else var versNum = "verUnknown";
+} 
+if(typeof useSurvey == "undefined") useSurvey = true;
+if(typeof courseCheck == "undefined") courseCheck = "all";
+if(typeof lessonCheck == "undefined") lessonCheck = "viewAll"; // applies to all lessons in course.
+if(typeof reqLessons == "undefined") reqLessons = [];//if courseCheck is "some", reqLessons must be a list of required lesson like this: ["01", "02", "05"]
+if(typeof reqTopics == "undefined") reqTopics = [];//if lessonCheck is set to "reqTopics", reqTopics must be a list of required topics FOR ENTIRE COURSE like this: ["01_1_a", "01_3_b", "03_5_c", "07_1_b"]
+var hasquiz=[];
+var myLessonX;
+var reqTopicsComplete=[]; // only used if lesson completion is based on specific movies/pages
+if(typeof courseType == "undefined") var courseType='';
+
+var myPlatform = "learn";
+var fakeid = Math.round(Math.random()*(9999999-999999)+999999);
+
+var ajaxstring="";
+
+//begin php script address vars
+if(window.location.href.indexOf("vle.sas.com")>-1){
+	var xAPIurl = "https://vle.sas.com/vle/data/xapi/xapiTrackID.php";
+	var xAPIgetURL = "https://vle.sas.com/vle/data/xapi/xapiGetData2.php";
+	var xAPIsetURL = "https://vle.sas.com/vle/data/xapi/xapiSetData2.php";
+	var xAPIclearURL = "https://vle.sas.com/vle/data/xapi/xapiClearData2.php";
+}
+else if(window.location.href.indexOf("vlestage.sas.com")>-1){
+	var xAPIurl = "https://vle.sas.com/vle/data/xapi/xapiTrackIDStage.php";
+	var xAPIgetURL = "https://vle.sas.com/vle/data/xapi/xapiGetDataStage.php";
+	var xAPIsetURL = "https://vle.sas.com/vle/data/xapi/xapiSetDataStage.php";
+	var xAPIclearURL = "https://vle.sas.com/vle/data/xapi/xapiClearDataStage.php";
+}
+else if (window.location.href.indexOf("learn.sas.com")>-1 ){
+	var xAPIurl = "https://learn.sas.com/vle/data/xapi/xTrackLrn.php";
+	var xAPIgetURL = "https://learn.sas.com/vle/data/xapi/xGetLrn.php";
+	var xAPIsetURL = "https://learn.sas.com/vle/data/xapi/xSetLrn.php";
+	var xAPIclearURL = "https://learn.sas.com/vle/data/xapi/xClearLrn.php";
+}
+else if ( window.location.href.indexOf("learnstage.sas.com")>-1){
+	var xAPIurl = "https://learn.sas.com/vle/data/xapi/xTrackLrnStage.php";
+	var xAPIgetURL = "https://learn.sas.com/vle/data/xapi/xGetLrnStage.php";
+	var xAPIsetURL = "https://learn.sas.com/vle/data/xapi/xSetLrnStage.php";
+	var xAPIclearURL = "https://learn.sas.com/vle/data/xapi/xClearLrnStage.php";
+}
+else if ( window.location.href.indexOf("learndev.sas.com")>-1){
+	var xAPIurl = "https://learn.sas.com/vle/data/xapi/xDevTrackData.php";
+	var xAPIgetURL = "https://learn.sas.com/vle/data/xapi/xDevGetData.php";
+	var xAPIsetURL = "https://learn.sas.com/vle/data/xapi/xDevSetData.php";
+	var xAPIclearURL = "https://learn.sas.com/vle/data/xapi/xDevClearData.php";
+}
+else if (window.location.href.indexOf("contentcontroller")>-1){
+	var xAPIurl = "https://vle.sas.com/vle/data/xapi/xapiTrackIDCC.php";
+	var xAPIgetURL = "https://vle.sas.com/vle/data/xapi/xapiGetDataCC.php";
+	var xAPIsetURL = "https://vle.sas.com/vle/data/xapi/xapiSetDataCC.php";
+	var xAPIclearURL = "https://vle.sas.com/vle/data/xapi/xapiClearDataCC.php";
+}
+else{
+	var xAPIurl = "https://vle.sas.com/vle/data/xapi/xapiTrackID2.php";
+	var xAPIgetURL = "https://vle.sas.com/vle/data/xapi/xapiGetData2.php";
+	var xAPIsetURL = "https://vle.sas.com/vle/data/xapi/xapiSetData2.php";
+	var xAPIclearURL = "https://vle.sas.com/vle/data/xapi/xapiClearData2.php";
+}
+//end php script address vars
+
+//var gotoNote = "";
+
+var useXAPI = true;
+
+//var actor1; //was used for email, no longer used
+var actor2; // used for tying profile id to xapi
+//if (!myFinalMovie) {var myFinalMovie = '';} -- myFinalMovie used to get set in rc_course but is no longer necessary
+//var fo = ""; //??
+
+var myHTMLPath = "";
+var myHTMLPop = "";
+var myHTMLQuiz = "";
+var myMovieTitle = "";
+var myMovieTime = "";
+var myMovieDetails = "";
+var myMovieArray;
+var myLessonTitle = "";
+var myObjectID; //set in showMovieDiv
+var answer_array = new Array();
+var myMoviePath = "";
+
+//var countKB = 0;
+var autoTOC = new Array();
+var myRefs = "";
+var mySection = "";
+var mySectionTitle = "";
+var myTopics = "";
+var myTopic = "";
+var gMovieArray = [];
+var narrWindow = "";
+var prevTopic = "";
+//var stateFlag = "";
+var alreadyopen;
+var hasVideo;	 
+
+if (!hasDemoPDF) {var hasDemoPDF = false;}
+if (!hasDemoHTML) {var hasDemoHTML = false;}
+if (!hasSimSteps) {var hasSimSteps = false;}
+if (!hasExCodeTask) {var hasExCodeTask = false;}
+if (!courseDesc) {var courseDesc = "stdElearn";} //values: legacySSEL (no videos, lesson pdfs) 
+if (typeof hasVideo ==="undefined") {hasVideo = true;}
+
+
+var scroll_position1;
+var scroll_position2 = 0;
+var mySim;
+var mySimSteps;
+var newWindow; 
+var printWindow;				
+var myType;
+var hasData = false;
+var activeColor = "#ffffff";
+var hasDetails = true;
+
+//begin landmark stuff
+var lastItem;
+var goToDelete = false;
+var goToLast = false;
+var goToFirst = false;
+//end landmark stuff
+
+var showImg = "rc_common/toc_show.svg";
+var hideImg = "rc_common/toc_hide.svg";
+var thisWindow = window.location.href;
+var myName = thisWindow.substring(thisWindow.lastIndexOf("/")+1,thisWindow.lastIndexOf(".")); 
+var resultsWindow = myName + "x.htm";
+popUpNotOpen = true;
+var encourage50 = false;
+
+
+///Language stuff
+if (!myLang) var myLang = "English";
+if (!myLangCode) var myLangCode = "en";
+if (!translateGUI) var translateGUI = "no";
+//added so old quizzes that don't link to lang.js don't break
+if ((myLangCode == "en") && (!passquiz)){
+ var yanswer = "Your answer";
+ var canswer = "Correct answer";
+ var passquiz = "Congratulations! Your score indicates that you have mastered the topics in this course. You can review the feedback and when you're finished, exit the lesson.";
+ var failquiz = "Your score indicates that you would benefit from reviewing topics in this lesson. Check the feedback below and when you are ready, take the quiz again.";
+}
+//added so old popup practices that don't link to lang.js don't break
+if ((myLangCode == "en") && (!ssbtn)){
+ var ssbtn = "Show Solution";
+ var hsbtn = "Hide Solution";
+}
+/////////////////// END OF SETTING VARIABLES /////////////////////////////
+
+function writeGUIlang(){
+//	$('#tab1').html(ctab + ' <button onClick="Javascript:popTOC(\'button\')" class="popout" title="' + tocpop + '"> ');
+    $('#tab1').html(ctab);
+	$('#tab3').html(stab);
+    $('#searchtext2').attr("title",searchtip);
+	$('#searchtext2').attr("placeholder",searchcourse);
+    $('#printVersion').attr("title",txtopen);
+    $('#vidSet').attr("title",vsbtn);
+	$('#accSet').attr("title",accset);
+	$('#takeNote').attr("title",notetip);
+    $('#takeNote2').attr("title",notetip);
+//	$('#nextButton').html(nextbtn + ' <img class="nextArrow" src="rc_common/RightCircleArrow.svg" aria-label="Next topic">');
+//  $('#prevButton').html('<img class="prevArrow" src="rc_common/LeftCircleArrow.svg" aria-label="Previous topic"> ' + prevbtn);
+    $('#nextButton').attr("title",nexttip);
+    $('#prevButton').attr("title",prevtip);
+    $('#popOut').attr("title",poptip);
+	$('#surveyButton').attr("title",surbtn);
+	$('#transsurveyButton').attr("title",tsurbtn);
+	$('#videoNotice').attr('title', vidoff);
+	$('#xtraChange').attr('title', xtrbtn);  
+	$('.xtraInd').attr('title', xtrtoc);  
+	if (myLangCode == "ar"){
+	    $('#panel1.panel').css("direction","rtl");
+	}
+}
+
+function writeGUIOther(){
+    $('#checkAnsButton').attr("value",cmabtn);
+    $('#NoAnswer').html(noansmsg);
+    $('#popOut').attr("title",poptip);
+	$('[id^=solnButton]').html(ssbtn);
+    $('#beginQuiz').attr("value",beginbtn);
+	$('#showHideBtn').attr("value",sabtn);
+	$('.toggSoln').attr("value",ssbtn);
+	$('#hideshowbutt').attr("value",scbtn);
+	$('[id^=toggleButton]').attr("value",sabtn);
+    $('#submitquiz').attr("value",sqbtn);
+	$('#delbtn').html(delbtn);
+	$('#editbtn').html(editbtn);
+	$('#subbtn').html(subbtn);
+	$('#canbtn').html(canbtn);
+	$('#notemsg').html(notemsg);
+	$('#ctshowtask').html(ctshowtask);
+	$('#ctshowcode').html(ctshowcode);
+	$('#ctintro').html(ctintro);
+}
+
+function insertMultiVicon(){
+	if(window.location.href.indexOf("learn.sas.com")>-1 ||window.location.href.indexOf("learnstage.sas.com")>-1 || window.location.href.indexOf("sww.sas.com/cbt/totara")>-1 || window.location.href.indexOf("sww.sas.com/cbt/Library_rc/TSCORM")>-1 ){
+		document.getElementById("multiicon").innerHTML = '<img width="20px" height="20px" src="rc_common/multiple-topic-bl.png">';
+		document.getElementById("multivstepsDLC").style.display="none";
+	}
+	else{
+		document.getElementById("multiicon").innerHTML='<img width="20px" height="20px" src="rc_common/multi_orange2.png" class="vleImage">';
+		document.getElementById("multivstepsT").style.display="none";
+	}
+}
+
+function setSelector(){
+	
+	if(document.forms['myphpform'].elements['courseVers'].value != ""){
+		xtraselect = document.forms['myphpform'].elements['courseVers'].value;
+		eCourseX.xtra = document.forms['myphpform'].elements['courseVers'].value;
+		$('#selected').text($(this).text());
+		for (i=0;i<selectoptions.length;i++){
+			if(selectoptions[i][0] == xtraselect) currentSelect = selectoptions[i][1];
+		}
+ 		document.getElementById('currSel').innerHTML = currentSelect;
+		
+		rewriteCourseTOC();
+		
+	}
+	
+}
+
+function setPrintSelector(){
+	
+	if(document.forms['myphpform'].elements['courseVers'].value != ""){
+		xtraselect = document.forms['myphpform'].elements['courseVers'].value;
+		$('#selected').text($(this).text());
+		for (i=0;i<selectoptions.length;i++){
+			if(selectoptions[i][0] == xtraselect) document.getElementById("currentSelect").innerHTML = selectoptions[i][1];
+		}
+ 		//document.getElementById('currSel').innerHTML = currentSelect;
+		
+	}
+	//console.log("doing the change");
+	$('#pracsoln .select').each(function(n){
+		if($(this).hasClass(xtraselect)) $(this).show();
+		else $(this).hide();
+		//console.log("did it?");
+	   });
+	   $('#pracnosoln .select').each(function(n){
+		if($(this).hasClass(xtraselect)) $(this).show();
+		else $(this).hide();
+		//console.log("did it?");
+	   });
+	   $('#demosteps .select').each(function(n){
+		if($(this).hasClass(xtraselect)) $(this).show();
+		else $(this).hide();
+		//console.log("did it?");
+	   });
+}
+
+var textonly = false;
+function goText(fromwhere){
+	//check if it's in regular state or text state
+	//console.log("TURNING OFF OVIES");
+	if(fromwhere=="frominit"){
+		
+	//	$("#transcript_panel").hide();
+		$('#overlayContainer').css('border','orange');
+		//set to text state in tracking
+		eCourseX.textonly = 'ON';
+		if(eCourseX.bookmark){
+			showMovieDivCheck(eCourseX.bookmark);
+		}
+		else showMovieDivCheck(gMovieArray[0][0]);
+		
+		$('#landmarkDiv4').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#landmarkDiv4'));
+		$('#noMovie').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie'));
+		$('#noMovie2').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie2'));
+		$('#videoNotice').css('display','block');
+	}
+	
+	else if(eCourseX.textonly == 'OFF'){
+	//if its in regular state, go to text state
+	$('#overlayContainer').css('border',' orange');
+	//set to text state in tracking
+		eCourseX.textonly = 'ON';
+		showMovieDivCheck(myorigmov);
+		//console.log("showing movie " + myMovie);
+		$('#landmarkDiv4').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#landmarkDiv4'));
+		$('#noMovie').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie'));
+		$('#noMovie2').text(vidyesbtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie2'));
+		$('#videoNotice').css('display','block');
+		//}
+	}
+	else{
+	//if its in text state, go to regular state
+		$('contentContainer').css('border','none');
+		//set to movie state in tracking
+		eCourseX.textonly = 'OFF';
+		showMovieDivCheck(myorigmov);
+	//	console.log("showing movie " + myMovie);
+		$('#landmarkDiv4').text(vidnobtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#landmarkDiv4'));
+		$('#noMovie').text(vidnobtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie'));
+		$('#noMovie2').text(vidnobtn);
+		$("<span aria-hidden='true'> (Alt+W)</span>").appendTo($('#noMovie2'));
+		$('#videoNotice').css('display','none');
+		//}
+	}
+}
+
+
+function getuserID(){
+	//console.log("window location is " + window.location.href);
+	if(window.location.href.indexOf("sww.sas.com")>0 || window.location.href.indexOf("sww2.sas.com")>0) testarea = true;
+	else if(window.location.href.indexOf("learn.sas.com")>0 ||window.location.href.indexOf("learnstage.sas.com")>0  || window.location.href.indexOf("totara")>0 || window.location.href.indexOf("learndev")>0) VLEcourse = true;
+    else if(window.location.href.indexOf("cloud.scorm") > 0 || window.location.href.indexOf("contentcontroller") > 0)	SCORMcourse = true;
+	else if(window.location.href.indexOf("vle.sas.com") > 0 || window.location.href.indexOf("vlestage.sas.com")>0) VLEcourse = true;
+	else if(window.location.href.indexOf("synegen")>0)VLEcourse = true; 
+	
+	return new Promise(function(resolve, reject){
+		if(versNum == "verUnknown"){
+			$.ajax({
+				type: "GET",
+				url: "./imsmanifest.xml",
+				dataType: "xml",
+	
+				error: function (e) {
+					//alert("An error occurred while processing XML file");
+					console.log("XML for versNum reading Failed: ", e);
+				},
+	
+				success: function (response) {
+	 
+					$(response).find("resource").each(function () {
+						 $(this).find('file').each(function(){
+							if($(this).attr('href')){
+								//don't pull from titles file
+								if($(this).attr('href').indexOf('.json')>1 && $(this).attr('href').indexOf('titles')==-1){
+									var wholeName = $(this).attr('href');
+									var partName = wholeName.substring(wholeName.indexOf("_")+1);
+									versNum = partName.substring(0,partName.indexOf("_"));
+									//console.log(versNum);
+								}
+							} 
+						 });        
+					});
+				}
+			});
+		}
+        if(!testarea) actorID = window.parent.GetStudentID();
+		else actorID = "00000";
+		if(actorID == "" || actorID == " ") actorID = "00000";
+		//console.log("and now actorid is " + actorID);
+        if(typeof actorID != "undefined"){
+            actor2 = {
+                "objectType": "Agent",
+                "name":actorID,
+                "account":{"name":actorID,"homePage":"http://www.sas.com"}  
+            }
+        }
+        resolve(actorID, versNum);
+    });
+}		
+
+/*!
+ * getLRSdata()
+ * 
+ * general method to pull stored progress
+ * data for in-lesson tracking.
+ * checks our LRS first, unless it is
+ * a "true SCORM" course, in which 
+ * case it checks the LMS. 
+ *
+ */
+function getLRSdata(myid){
+    return new Promise(function(resolve, reject){
+        var mystoreddata;
+      //  console.log("getting LRS data and window.parent.location is " + window.parent.location);
+	    myactivityIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode;
+       //if it's true SCORM
+		if(SCORMcourse){
+            mystoreddata = window.parent.GetDataChunk();
+          //  console.log("got this data from LMS " + mystoreddata);
+            if ((!mystoreddata) || (mystoreddata == null) || (mystoreddata == 'undefined') || mystoreddata == "cleared") { 
+                console.log("no data in LMS");
+                mystoreddata = "nodata";
+            }
+            console.log(" SCORM course-- my storeddata is " + mystoreddata);
+            resolve(mystoreddata);
+        }
+		//or if it is the test area
+		else if(actorID == "00000" && (window.location.href.indexOf("sww.sas.com")>0)){
+			mystoreddata = "nodata";
+            console.log("my storeddata is " + mystoreddata);
+            resolve(mystoreddata);
+		}
+		//if it's not test area but user doesn't have valid ID
+		else if(testarea!=true && actorID == "00000" ){
+			mystoreddata = "nodata";
+            console.log("default user -- my storeddata is " + mystoreddata);
+            resolve(mystoreddata);
+		}
+		//non-scorm, non-test, good user id
+        else if(actor2.name != "Default User" && actor2.name != "00000"){
+			
+			console.log("ajaxing for getLRS");
+          
+            ajaxstring = myactivityIRI+'&*'+actor2.account.name+'/'+fakeid;
+            $.ajax({
+                type: "POST",
+                url:xAPIgetURL,	
+                xhrFields : {
+                    withCredentials : true
+                },
+                data:{
+                //    "actorAccount":actor2.account.homePage,
+                //    "actorName":actor2.account.name,
+                //    "activityPath": myactivityIRI
+                "mydata":ajaxstring
+                },
+                
+                crossDomain : true,
+                success: function(data){
+                    //report back with data from LL state
+                    console.log("got LL state as follows: " + data);
+					//don't write error screen to eCourseX.
+					if(data.indexOf("<!DOCTYPE")>-1 || data.length<4 || data=="Unexpected input")mystoreddata = "nodata";
+					else  mystoreddata = data;
+                    //console.log("my storeddata is " + mystoreddata);
+                    resolve(mystoreddata);
+                },
+                error: function(){
+                    console.log("error pulling data from LRS. starting over.");
+                    mystoreddata = "nodata";
+                    console.log("my storeddata is " + mystoreddata);
+                    resolve(mystoreddata);
+                }
+            
+            });
+        }
+		//shouldn't ever get to this point
+        else{
+            mystoreddata = "nodata";
+            console.log("Fell through the IFs in getLRS and my storeddata is " + mystoreddata);
+            resolve(mystoreddata);
+        }
+    });  
+}
+
+function processTrackData(mydata){
+   // console.log("in processing data and mydata is " + mydata);
+    return new Promise(function(resolve, reject){
+       // console.log("processing data");
+	  //need to check data from LRS and possibly clean it up if there are extra characters at the end-- it should be JSON ready. But it comes back as a string (I think). 
+	/* if(mydata != "nodata"){
+		var firstBracket = mydata.indexOf("}");
+		var secondBracket = mydata.indexOf("}",firstBracket+1);
+		var myEndPoint = mydata.indexOf("}",secondBracket+2);
+		var mydata2 = mydata.substring(0,myEndPoint+1);	
+	 }  
+	 else*/
+	
+	 var mydata2 = mydata;
+	 var curlyb = 0;
+	 for(i=0;i<mydata2.length;i++){
+		if(mydata2.charAt(i)=="{") curlyb++;
+		else if(mydata2.charAt(i) == "}") curlyb--;
+	 }
+	
+	 if(curlyb != 0) {
+		console.log("off balance");
+		if(mydata2.charAt(mydata2.length-1)=="}" && mydata2.charAt(mydata2.length-2)=="}"){
+			mydata2 = mydata2.slice(0,-1);
+			console.log("mydata 2 is now " + mydata2);
+		}
+		else if(mydata2.indexOf(',"courseEdit":[]}')>0 && mydata2.length-mydata2.indexOf(',"courseEdit":[]}')<27){
+			//mydata2 = mydata2.slice(0,-8);
+			mydata2 = mydata2.substr(0,mydata2.indexOf(',"courseEdit":[]}')+17);
+			console.log("mydata2 is now " + mydata2);
+		}
+		
+		
+	 }
+	 		//console.log("mydata2 is " + mydata2);																																
+       if(SCORMcourse){
+            if(mydata2.length < 1 || mydata2 == null || mydata2 == "nodata"){
+                eCourseX = createCoursexapiJSON(eCode);
+                console.log("no data, starting fresh...");
+            }
+            else {
+                eCourseX = JSON.parse(mydata2);
+			//	setChecks();
+            }
+            dataLoaded = "yes";
+        }
+        else{
+
+			if(VLEcourse) var myLMSdata = window.parent.GetDataChunk();
+			else var myLMSdata = "noLMS";
+			console.log("my LMSdata is " + myLMSdata);
+			console.log("char at -1 is " + myLMSdata.charAt(myLMSdata.length-1));
+			if(myLMSdata.charAt(myLMSdata.length-1)=="%") myLMSdata=myLMSdata.substring(0,myLMSdata.length-1)+"}";
+			console.log("mylmsdata is now " + myLMSdata);
+			//No state found -- need to check data chunk to see if there is anything there.
+			if(mydata2.indexOf("No State") > -1 || mydata2 == "nodata"){
+				if((myLMSdata == null) || (myLMSdata == 'undefined') || (myLMSdata == "cleared") || myLMSdata == "<anonymous>" || myLMSdata == "" || myLMSdata == "noLMS"){
+					//could put warning for users here-- test if it's learn.sas.com, and if so, warn them that progress won't be saved
+               		console.log("no state found anywhere, starting fresh");
+                	eCourseX = createCoursexapiJSON(eCode);
+				}
+                else{
+					console.log("no data from LRS but good data from LMS, setting eCourseX now");
+					//need to check to make sure that ecode has not changed in scormddlid
+					var myolddata = JSON.parse(myLMSdata);
+					if(myolddata['eCode'] == eCode)	{
+						console.log("using data from LMS");
+						eCourseX = JSON.parse(myLMSdata);
+					}
+					else {
+						console.log("data from lrs didn't match ecode, starting fresh");
+                		eCourseX = createCoursexapiJSON(eCode);
+					}
+					
+				}
+            }
+            else{
+				if((myLMSdata == null) || (myLMSdata == 'undefined') || (myLMSdata == "cleared") || myLMSdata == "<anonymous>" || myLMSdata == ""){
+					console.log("good data from LRS but nothing from LMS, so using LRS data");
+					eCourseX = JSON.parse(mydata2);
+				}
+				else{
+					var lrsdata = JSON.parse(mydata2);
+					var lmsdata = JSON.parse(myLMSdata);
+					if(lmsdata['eCode'] == lrsdata['eCode']){
+						if(typeof lrsdata['timestamp']!='undefined' && typeof lmsdata['timestamp'] !='undefined'){
+							//if LRS tracking has been updated more recently-- need to check and make sure that we haven't cleared just LRS data
+							if(lrsdata['timestamp']>lmsdata['timestamp'] && (mydata2.length >= myLMSdata.length)){
+								eCourseX = lrsdata;
+							}
+							else eCourseX = lmsdata;
+						}
+						else if(typeof lrsdata['timestamp'] != 'undefined') eCourseX = lrsdata;
+						else if(typeof lmsdata['timestamp'] != 'undefined') eCourseX = lmsdata;
+						else eCourseX = createCoursexapiJSON(eCode);
+					}
+					else{
+						//lmsdata is pulling from previous version, default to newer version from lrs.
+						if(lrsdata['eCode'] == eCode) {
+							console.log("using lrs data because it matches current ecode");
+							eCourseX = lrsdata;
+						}
+						else eCourseX = createCoursexapiJSON(eCode);
+					}					
+
+				}
+/*				else if(mydata2.length > myLMSdata.length){
+                	console.log("data from LRS is best, using that...")
+					eCourseX = JSON.parse(mydata2);
+				}
+				else {
+					console.log("best data from LMS, using that...")
+					eCourseX = JSON.parse(myLMSdata);
+				}*/
+             //   setChecks();
+            }
+            dataLoaded = "yes";
+        }
+        if(typeof(eCourseX.eCode) == 'undefined'){
+            console.log("had data, but it was bad so starting over");
+            eCourseX = createCoursexapiJSON(eCode);
+        }
+		
+        resolve(dataLoaded);
+    });  
+}
+
+var unreqlessons="@";//used for creating json file
+var allreqdmovies = [];
+var reqdMovsTotal = 0;
+function initPageJS(){
+    return new Promise(function(resolve, reject){
+		if(familycode == "unknown" && eCode.toUpperCase() in famCode) familycode = famCode[eCode.toUpperCase()];
+		if(versNum == "verUnknown"){
+			$.ajax({
+				type: "GET",
+				url: "./imsmanifest.xml",
+				dataType: "xml",
+	
+				error: function (e) {
+					//alert("An error occurred while processing XML file");
+					console.log("XML for versNum reading Failed: ", e);
+				},
+	
+				success: function (response) {
+	 
+					$(response).find("resource").each(function () {
+						 $(this).find('file').each(function(){
+							if($(this).attr('href')){
+								//don't pull from titles file
+								if($(this).attr('href').indexOf('.json')>1 && $(this).attr('href').indexOf('titles')==-1){
+									var wholeName = $(this).attr('href');
+									var partName = wholeName.substring(wholeName.indexOf("_")+1);
+									versNum = partName.substring(0,partName.indexOf("_"));
+								//	console.log(versNum);
+								}
+							} 
+						 });        
+					});
+				}
+			});
+		}
+		console.log("familycode is now "+ familycode);
+       //set var to indicate when page is ready, initialize to no
+		var allset = "no";
+        $('#countdownButt').hide();
+		if(SCORMcourse){
+            useXAPI = false; 
+			mySCO = window.parent.mySCO;//gets set in indexAPIcc. 
+			//console.log("mySCO is " + mySCO);
+			var whicharray = "movieArray" + mySCO;
+			SCOfirst = eval(whicharray)[0][0];
+            SCOlast = eval(whicharray)[eval(whicharray).length-1][0];
+			$("#scormFooter").css('visibility','visible');
+			$("#courseHeader").css("display","none");
+			$("#rev2").css("display","none");
+			//if(eCourseX.currentMovie.includes(eCodeLC+mySCO)) eCourseX.bookmark = eCourseX.currentMovie[]	       
+        }
+		else if(testarea){
+			$("#courseHeader").css("display","block");
+			useXAPI = false;
+		
+		}
+		else if(window.location.href.indexOf("synegen")!=-1){
+			useXAPI = false;
+			$("#courseHeader").css("display","none");
+			$("#rev2").css("display","none");
+			$("#scormFooter").css("display","none");
+		}
+		else if(actorID == "00000"){
+			//make sure they aren't in the VLE/Totara
+			if(window.location.href.indexOf("vle.sas.com")>0 || window.location.href.indexOf("vlestage.sas.com")>0 || window.location.href.indexOf("learn.sas.com")>0 || window.location.href.indexOf("learnstage.sas.com")>0 ){
+				useXAPI = false; 
+			}
+			else if(window.location.href.indexOf("synegen")!=-1){
+				useXAPI = false;
+				$("#courseHeader").css("display","none");
+				$("#rev2").css("display","none");
+				$("#scormFooter").css("display","none");
+			}
+			else if(window.location.href.indexOf("learnstage")!=-1){
+				useXAPI = true;
+				$("#courseHeader").css("display","none");
+				$("#rev2").css("display","none");
+				$("#scormFooter").css("display","none");
+			}
+			else {
+				useXAPI = true;
+           		$("#courseHeader").css("display","none");
+			    $("#rev2").css("display","none");
+				$("#scormFooter").css("display","none");
+			}
+			
+		}
+        else{
+            useXAPI = true;
+            $("#courseHeader").css("display","none");
+			$("#rev2").css("display","none");
+			$("#scormFooter").css("display","none");
+        }
+		if(typeof newQuizlabel != "undefined" && newQuizlabel.length > 1) quizlabel = newQuizlabel;
+        if(typeof eCourseX.eCode == 'undefined') eCourseX=createCoursexapiJSON(eCode);
+		if(eCourseX.eCode != eCode) eCourseX.eCode = eCode;
+		if(typeof eCourseX.favorites=="undefined") { eCourseX.favorites=[];}
+		if(typeof eCourseX.mynotes == "undefined") { eCourseX.mynotes=[];}
+		if(typeof eCourseX.textonly == "undefined"){eCourseX.textonly = 'OFF';} 
+		if(typeof eCourseX.mymode == 'undefined') {eCourseX.mymode="light";}
+		if(typeof eCourseX.myfontsize == 'undefined') {	eCourseX.myfontsize="100";}
+		if(typeof eCourseX.xtra == 'undefined') eCourseX.xtra = "none";
+		else if(eCourseX.xtra != "none") xtraselect = eCourseX.xtra;
+		if(myLangCode=="pt-br") eCourseX.captions = "showing";
+		if(typeof eCourseX.bookmark == 'undefined') {	console.log("resetting bookmark");eCourseX.bookmark=gMovieArray[0][0];}
+		else{
+			var bkmkecode = eCourseX.bookmark.substring(0,(eCourseX.bookmark.indexOf("_")-2));
+		//	console.log("bkmkecode is " + bkmkecode);
+			var goodbkmk = false;
+			for(g=0;g<gMovieArray.length;g++){
+				if(eCourseX.bookmark == gMovieArray[g][0]) {
+					goodbkmk = true;
+				//	console.log("bookmark is good!");
+				}
+			}
+			if(bkmkecode != eCodeLC || !goodbkmk){ console.log("resetting bookmark again");eCourseX.bookmark = gMovieArray[0][0];}
+		} 
+		
+		if(typeof eCourseX.reqLessonsComplete == "undefined"){eCourseX.reqLessonsComplete = {};}
+		else{
+			//need to check and see which lesson(s) have been added or removed
+			var currLessons=[];
+			for(b=0;b<lessonTitles.length;b++){
+				var nokeyword = true;
+				for(j=0;j<optlesstitles.length;j++){
+					if(lessonTitles[b][1].indexOf(optlesstitles[j])>-1){
+						nokeyword = false;
+						//console.log("found an unrequired lesson");
+					} 
+				}
+				for(k=0;k<optkeywords.length;k++){
+					if(lessonTitles[b][1].indexOf(optkeywords[k])>-1){
+						nokeyword = false;
+						//console.log("found an unrequired lesson");
+					} 
+				}
+				if(nokeyword) currLessons.push(lessonTitles[b][0].slice(-2));
+			}
+			//	console.log("currLessons is " + JSON.stringify(currLessons));
+			var reqLessonNums = Object.keys(eCourseX.reqLessonsComplete);
+			//run thru and verify that all nums listed as keys in rLC are actual lessons
+			for(a=0;a<reqLessonNums.length;a++){
+				if(currLessons.includes(reqLessonNums[a])){
+			//	console.log("this lesson is good and required " + reqLessonNums[a]);		
+				}
+				else{
+				//	console.log("deleting lesson " + reqLessonNums[a] + " from reqLessonsComplete");
+					delete eCourseX.reqLessonsComplete[reqLessonNums[a]];
+				}
+			}
+			//now check if there are new lessons that aren't yet in rLC
+			for(c=0;c<currLessons.length;c++){
+				if(reqLessonNums.includes(currLessons[c])){
+					//do nothing
+				}
+				else{
+					eCourseX.reqLessonsComplete[currLessons[c]] = 'no';
+				}
+			}
+			
+			//now check to see if all are complete, and then check cmi.core.lesson_status
+			if(VLEcourse) var totaracomplete = window.parent.SCORM_CallLMSGetValue('cmi.core.lesson_status');
+
+			if(Object.values(eCourseX.reqLessonsComplete).includes("no")){
+				//console.log("course not finished yet");
+			}
+			else if(totaracomplete == "incomplete"){
+				console.log("resending course completion");
+			
+				if(VLEcourse){
+					//console.log("am i getting here?");
+					if(eCourseX.coursecomplete == 0)eCourseX.coursecomplete = Date.now();
+					eCourseX.cprog = 100;
+					window.parent.SetReachedEnd();
+					window.parent.SetScore(100,100,0);
+					window.parent.SetPassed();
+					window.parent.CommitData();
+					if(eCourseX.cprog !="100"){
+					//	sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/100percentCourseComplete');
+						
+						eCourseX.cprog = "100";
+					}
+					
+/*					celebrate(shortlesson,"course");*/
+				}
+				
+			}
+		}
+		if(typeof eCourseX.lessonCheck == "undefined"){eCourseX.lessonCheck = "viewAll"};
+		if(typeof eCourseX.courseCheck == "undefined"){eCourseX.courseCheck = "all"};
+		if(typeof eCourseX.cprog == "undefined"){eCourseX.cprog = "0"};
+		if(typeof eCourseX.timestamp == "undefined"){const currentDate = new Date();
+			const timestamp = currentDate.getTime();eCourseX.timestamp = timestamp;}
+		//add courseEdit timestamp.
+		if(typeof eCourseX.courseEdit == "undefined") eCourseX.courseEdit=[];
+		if(typeof courseEditDate != "undefined" && !eCourseX.courseEdit.includes(courseEditDate)) eCourseX.courseEdit.push(courseEditDate);
+			var lessReportkeys = Object.keys(eCourseX.lessReport);
+		if(typeof eCourseX.lessReport == "undefined"){eCourseX.lessReport = {};}
+		else if(lessReportkeys.length != lessonTitles.length){
+			
+			var currLessons2=[];
+			var oldlessons = [];
+			//var newLessReport = {};
+			
+			//console.log("eCourseX.lessReport is " + JSON.stringify(eCourseX.lessReport));
+			//console.log("ecoursex.lessreport length is " + lessReportkeys.length + " and lessonTitles length is " + lessonTitles.length);
+			for(a=0;a<lessonTitles.length;a++){
+				currLessons2.push(lessonTitles[a][0].slice(-2));
+			}
+			for(b=0;b<lessReportkeys.length;b++){
+				oldlessons.push(eCourseX.lessReport[b]['num']);
+			}
+			var addlessons = 0;
+			for(i=0;i<currLessons2.length;i++){
+				
+				
+				if(oldlessons.includes(currLessons2[i])){
+					//console.log("lesson " + currLessons2[i] + " should already be included");
+				}
+				else{
+					//console.log("adding " + currLessons2[i] + " to newlessReport")
+					var newkey = lessReportkeys.length+addlessons;
+					eCourseX.lessReport[newkey] = {"num":currLessons2[i], "start":0, "complete":0, "view":0,"access":0};
+					addlessons ++;
+				}
+				
+				//eCourseX.lessReport[i] = {"num":shortless, "start":"", "complete":"", "view":"","access":0};                                   
+			}
+			//console.log("eCourseX.newLessREport is now " + JSON.stringify(newLessReport))
+			//eCourseX.lessReport = newLessReport;
+			//console.log("eCourseX.lessReport is now " + JSON.stringify(eCourseX.lessReport));
+		 	if(eCourseX.lessReport[0]['start'] == "undefined" ||eCourseX.lessReport[0]['start'] == ""||eCourseX.lessReport[0]['start'] == null ||eCourseX.lessReport[0]['start'] == 0) eCourseX.lessReport[0]['start']= Date.now();
+			 eCourseX.lessReport[0]['view'] = Date.now();
+		}
+
+		//create allreqdmovies
+		//console.log("about to create allreqdmovies" + lessonTitles.length);
+		for(a=0;a<lessonTitles.length;a++){
+			var isopt = false;
+			for(b=0;b<optkeywords.length;b++){
+				if(lessonTitles[a][1].indexOf(optkeywords[b])>-1){
+					//optional keyword found
+					isopt = true;
+					break;
+				}
+			}
+			//if it's not an optional lesson
+			if(!isopt){
+				//get the lessonnum == ex. 01
+			//	console.log("adding a lesson to allreqd");
+				var lesscode = lessonTitles[a][0].substr(eCode.length);
+				allreqdmovies[lesscode]=[];
+				for(c=0;c<eval("sectionArray"+lesscode).length;c++){
+					var sectcode = eval("sectionArray"+lesscode)[c][0];
+					//console.log("sectcode is " + sectcode);
+					for(d=0;d<optkeywords.length;d++){
+						//console.log("optkeyword is " + optkeywords[d]);
+						if(eval("sectionArray"+lesscode)[c][1].indexOf(optkeywords[d])>-1){
+							isopt = true;
+							break;
+						}
+					}
+					//now you have a good, non-optional section-- add those moves to allreqdmovies array
+					if(!isopt){
+						for(e=0;e<eval("movieArray"+lesscode).length;e++){
+						//	console.log("testing "+eval("movieArray"+lesscode)[e][0].indexOf(sectcode));
+							if(eval("movieArray"+lesscode)[e][0].indexOf(sectcode)==0){
+								for(f=0;f<optkeywords.length;f++){
+									if(eval("movieArray"+lesscode)[e][2].indexOf(optkeywords[f])>-1){
+										isopt = true;
+										break;
+									}
+								}
+								if(!isopt){
+									var movcode = eval("movieArray"+lesscode)[e][0].substring(eCode.length);
+									allreqdmovies[lesscode].push(movcode);
+									reqdMovsTotal++;
+						//			console.log("adding "+movcode+ " to allreqdmovs for " + lesscode);
+									//console.log("reqdMovsTotal is now " + reqdMovsTotal);
+								}
+								else isopt = false;
+								
+							}
+						}
+						
+					}
+					else{
+						isopt = false;
+					}
+					
+				}
+			}
+			
+		}//end create allreqdmovies
+	
+
+		//check moviesComplete to see if anything has been removed that is now in moviesComplete, if so remove it
+		for(x=0;x<eCourseX.movieComplete.length;x++){
+			var fullmov = eCodeLC+eCourseX.movieComplete[x];
+			var lesscode = eCourseX.movieComplete[x].substr(0,2);
+			var isgood = false;
+			for(y=0;y<eval("movieArray"+lesscode).length;y++){
+				if(eval("movieArray"+lesscode)[0] == fullmov){
+					isgood = true;
+					break;
+				}
+			}
+			if(!isgood){
+				eCourseX.movieComplete.slice(x);
+			}
+			
+		}
+
+		//now check to see if what's in moviecomplete make any lesson complete
+
+		//go thru allreqdmovies, for each lesson, check to see if everything in it is also in movieComplete. if yes, call marklessoncomplete and then clear those from movieComplete.
+		//allreqdmovies is key/value instead of indexed-- so need to use foreach as kay->value but that's php
+		Object.keys(allreqdmovies).forEach(key => {
+			// Perform operations with key and object[key]
+			var alldone = true;
+			for(a=0;a<allreqdmovies[key].length;a++){
+				if(!eCourseX.movieComplete.includes(allreqdmovies[key][a])){
+					alldone = false;
+					break;
+				}	
+			}
+			if(alldone){
+				//console.log("calling marklessoncomplete from 877");
+				markLessonComplete(key);
+			}
+		  });
+		
+	
+        
+		
+
+		if(typeof eCourseX.survey == "undefined" && useSurvey){eCourseX.survey = false;}
+		else if(!useSurvey){eCourseX.survey = true;}
+		if(typeof eCourseX.transurvey == "undefined"){eCourseX.transurvey = [true,''];}
+		if(myLangCode!="en" && eCode=="EVYOV51" && window.location.href.indexOf("testarea")==-1){
+			const currentDate = new Date();
+			const tstime = currentDate.getTime();
+			$("#transdialog").dialog("open");
+			//need to compare eCourseX.timestamp to eCourseX.transurvey[1]-- if within 24 hours, do nothing otherwise, pop trans alert
+			if(eCourseX.transurvey[0] && eCourseX.transurvey[1]==''){
+				$("#transdialog").dialog("open");
+				//set transurvey[1] to tstime
+				eCourseX.transurvey[1] = tstime;
+			}
+			else if(eCourseX.transurvey[0] && eCourseX.transurvey[1]!=''){
+				const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000; // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+  
+  				// Calculate the absolute difference between the two timestamps
+  				  const timeDifference = Math.abs(eCourseX.transurvey[1] - eCourseX.timestamp);
+
+				  // Check if the difference is less than or equal to one day
+				  if(timeDifference > ONE_DAY_IN_MILLISECONDS && eCourseX.transurvey[0]){
+					//open the transurvey alert
+					$("#transdialog").dialog("open");
+					//set transurvey[1] to tstime
+					eCourseX.transurvey[1] = tstime;
+				  }
+				  else {console.log("No transurvey popped -- inner loop.");}
+					//	 && (eCourseX.transurvey[1] - eCourseX.timestamp))
+			
+			}
+			else {console.log("No transurvey popped -- outer loop.");}
+		}
+		if(typeof eCourseX.coursestart == "undefined"){eCourseX.coursestart = 0;}
+		if(typeof eCourseX.coursecomplete == "undefined"){eCourseX.coursecomplete = 0;}
+	    if(eCourseX.autoadvance == "ON") setAutoadvance();
+		if(eCourseX.autoplay == "OFF" || (eCourseX.autoplay=="ON" && mySCO == "88")) setAutoplay();
+		if(eCourseX.countdown == "OFF") setVideoCountdown();
+		if(eCourseX.textonly == "ON") goText("frominit");
+		if(eCourseX.myfontsize !="100"){
+			if(eCourseX.myfontsize == "125") {
+				document.body.style.fontSize = "125%";	
+				$(".faveDiv").css("padding-top",".2em");
+				$("#panel1").css("margin-top","28px") 
+			}
+			else if(eCourseX.myfontsize == "150"){
+				document.body.style.fontSize = "150%";
+				$(".faveDiv").css("padding-top",".4em");
+				$("#printVersion").css("padding-top","6px");
+				$("#help").css("margin-top","4px");
+				$("#panel1").css("margin-top","33px");
+				$(".panel").css("height","91%");
+			} 
+		}
+		if(eCourseX.cprog !="0"  && myLangCode=="en") document.getElementById("surveyButton").style.display="inline"; 
+		else if(myLangCode != "en" && eCode=="EVYOV51") document.getElementById("transsurveyButton").style.display = "inline";
+		//if reqLessonsComplete has not been set before
+		var firstReq = Object.keys(eCourseX.reqLessonsComplete)[0];
+		//for(i=0;i<eCourseX.reqLessonsComplete.length;i++){
+		//	console.log("a req lesson is " + eCourseX.reqLessonsComplete[i][0]);
+		//}
+		//console.log("firstreq is " + firstReq);
+		if(typeof firstReq =="undefined"){
+			
+			//console.log("initializing reqLessonsComplete from rc.js");
+			//need to set up reqLessonComplete-- based on courseCheck -- 
+			
+			//if it's all, then set to same as lessonTitles with exceptions
+			if (courseCheck == "all" && !testarea) {
+				for(i=0;i<lessonTitles.length;i++){
+					var nokeyword = true;
+					//if it's the last lesson of the course, check if the title has one of the opt lesson titles in it
+					//and for any lesson, check if it has one of the optional keywords in it
+					if(i==lessonTitles.length-1){
+						for(j=0;j<optlesstitles.length;j++){
+							if(lessonTitles[i][1].indexOf(optlesstitles[j])>-1){
+								nokeyword = false;
+								unreqlessons += lessonTitles[i][0].slice(-2) + "@";
+							} 
+						}
+					}
+					for(j=0;j<optkeywords.length;j++){
+						if(lessonTitles[i][1].indexOf(optkeywords[j])>-1) {
+							nokeyword = false;
+							unreqlessons += lessonTitles[i][0].slice(-2) + "@";
+						}
+					}
+					if(nokeyword ){
+						var mynum = lessonTitles[i][0].slice(-2);
+						eCourseX.reqLessonsComplete[mynum] =  "no";
+					}
+				}
+			}
+			//otherwise, need to use reqLessons
+			else{
+				for(i=0;i<reqLessons.length;i++){
+					eCourseX.reqLessonsComplete[reqLessons[i]] = "no";
+					
+				}
+				if(reqLessons.length != lessonTitles.length){
+					for(j=0;j<lessonTitles.length;j++){
+						if(reqLessons.includes(lessonTitles[j][0].slice(-2))) {}// do nothing
+						else unreqlessons += lessonTitles[j][0].slice(-2);
+					}
+				}
+			}		
+		}
+		
+		//if reqTopicsComplete has not been set and is required
+		if(lessonCheck == "reqTopics"  && eCourseX.reqTopicsComplete == [] ){
+			for(i=0;i<reqTopics.length;i++){
+				eCourseX.reqTopicsComplete[i] = [reqTopics[i], "no"];
+			}
+		}
+		if(lessonCheck == "viewAll"){
+			//go through each lesson that isn't lesson 00
+			//need to pull lesson numbers from lessonTitles[i].substring(-2)
+			for(i=1;i<lessonTitles.length-1;i++){
+				var myix = lessonTitles[i][0].slice(-2);
+				//if(i<10) var ix = "0" + i;
+				//else var ix = i;
+				for(j=0;j<(eval("movieArray"+myix)).length;j++){
+					if((eval("movieArray"+myix)[j][2].indexOf(quizlabel)>-1 && eval("movieArray"+myix)[j][2].length == quizlabel.length)|| (eval("movieArray"+myix)[j][2].indexOf(casestudylabel)>-1 && eval("movieArray"+myix)[j][2].length == casestudylabel.length)){
+						hasquiz.push(myix);
+					}
+				}
+			}
+		}
+		
+		var allLess = [];
+		for(aj=0;aj<lessonTitles.length;aj++){
+			allLess[aj] = lessonTitles[aj][0].slice(-2);
+		}
+		//console.log("lessoncomplete length is " + eCourseX.lessonComplete.length);
+		eCourseX.lessonComplete = eCourseX.lessonComplete.filter(function(value){
+			return (allLess.includes(value));
+		});
+	//	console.log("and now lessoncomplete length is " + eCourseX.lessonComplete.length);
+		for(j=0;j<eCourseX.lessonComplete.length;j++){
+			//if the lesson is complete, increase coursemoviescomplete by the length of movieArrayXX.
+			var myMovs = "movieArray"+eCourseX.lessonComplete[j];
+			
+			//console.log("completed movie array has length " + eval(myMovs).length);
+			//if(allLess.includes(eCourseX.lessonComplete[j])){
+				courseMoviesComplete += eval(myMovs).length;
+				var reqkeys = Object.keys(allreqdmovies);
+				
+				for(k=0;k<eval(myMovs).length;k++){
+					//console.log("LINE 1062" + eval(myMovs)[k][0].substring(eCode.length));
+					if(reqkeys.includes(eval(myMovs)[k][0].substring(eCode.length,eCode.length+2))){
+						if(allreqdmovies[eval(myMovs)[k][0].substring(eCode.length,eCode.length+2)].includes(eval(myMovs)[k][0].substring(eCode.length))) {
+							courseReqMoviesComplete++ ;
+						}
+					}
+				}
+			//}
+			//else{
+			//	eCourseX.lessonComplete.splice(j,1);
+			//}
+			
+			//console.log("coursemoviescomplete is now " + courseMoviesComplete );
+			eCourseX.movieComplete  = eCourseX.movieComplete.filter(function(value){
+				return value.substring(0,2)!=eCourseX.lessonComplete[j];
+			});
+
+		}
+		
+		for(l=0;l<eCourseX.movieComplete.length;l++){
+			//console.log("testing for " + eCourseX.movieComplete[l]);
+			var thismovcomplete = eCourseX.movieComplete[l].substring(0,2);
+			//console.log("thismov is " + thismovcomplete);
+			var reqkeys = Object.keys(allreqdmovies);
+			if(reqkeys.includes(thismovcomplete)){
+				if(allreqdmovies[thismovcomplete].includes(eCourseX.movieComplete[l])) {
+					courseReqMoviesComplete++;
+				}
+			} 
+		}
+		//console.log("eCourseX movieComplete is now " + eCourseX.movieComplete);
+		var firstStart = Date.now();
+		
+		for(key in eCourseX.lessReport){
+			for(innerkey in eCourseX.lessReport[key]){
+				//console.log('this is entry ' + innerkey + ': ' + eCourseX.lessReport[key][innerkey] + ' and it is type '+ typeof eCourseX.lessReport[key][innerkey]);
+				switch (innerkey){
+					case 'start':
+						if(typeof eCourseX.lessReport[key][innerkey] == 'string' && eCourseX.lessReport[key][innerkey].indexOf("Z")>0){
+							var newstart = Date.parse(eCourseX.lessReport[key][innerkey]);
+							eCourseX.lessReport[key][innerkey] = newstart;
+							if(newstart < firstStart) {
+								firstStart = newstart;
+								console.log("changing firstStart to " + firstStart);
+							}
+						}
+						else if(eCourseX.lessReport[key][innerkey] == null){
+							eCourseX.lessReport[key][innerkey] = 0;
+						}
+					case 'view':
+						if(typeof eCourseX.lessReport[key][innerkey] == 'string'&& eCourseX.lessReport[key][innerkey].indexOf("Z")>0){
+							var newview = Date.parse(eCourseX.lessReport[key][innerkey]);
+							if(typeof newview =="number") eCourseX.lessReport[key][innerkey] = newview;
+						}
+						else if(eCourseX.lessReport[key][innerkey] == null){
+							eCourseX.lessReport[key][innerkey] = 0;
+						}
+					case 'complete':
+						if(typeof eCourseX.lessReport[key][innerkey] == 'string'&& eCourseX.lessReport[key][innerkey].indexOf("Z")>0){
+							var newcomplete = Date.parse(eCourseX.lessReport[key][innerkey]);
+							if(typeof newcomplete == "number") eCourseX.lessReport[key][innerkey] = newcomplete;
+						}
+						else if(eCourseX.lessReport[key][innerkey] == null){
+							eCourseX.lessReport[key][innerkey] = 0;
+						}
+				}
+			}
+			
+		}
+		//console.log("courseReqMoviesComplete is " + courseReqMoviesComplete);
+		//console.log("and reqdMovsTotal is " + reqdMovsTotal);
+		eCourseX.cprog = (courseReqMoviesComplete/reqdMovsTotal)*100;
+		//console.log("cprog before rounding is " + eCourseX.cprog);
+		eCourseX.cprog = Math.round(eCourseX.cprog);
+		if(eCourseX.cprog > 100) eCourseX.cprog  = 100;
+		//console.log("courseprog is " + eCourseX.cprog + " and type is " + typeof eCourseX.cprog);
+		if(firstStart < Date.now()){
+			eCourseX.coursestart = firstStart;
+		//	sendXAPIstatement(xstarted,window.location.href +"/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum + "/on/"+firstStart);
+		}
+		if(eCourseX.lessReport=={}){
+			for(i=0;i<lessonTitles.length;i++){
+				var shortless = lessonTitles[i][0].slice(-2);
+				//console.log("shortless is " + shortless);
+				eCourseX.lessReport[i] = {"num":shortless, "start":0, "complete":0, "view":0,"access":0};                                   
+			}
+		 	eCourseX.lessReport[0]['start']= Date.now();
+			 eCourseX.lessReport[0]['view'] = Date.now();
+		}
+	if(eCourseX.lessReport[0]['start']=="" || eCourseX.lessReport[0]['start']==null|| eCourseX.lessReport[0]['start']==0)eCourseX.lessReport[0]['start']= Date.now();
+		if(eCourseX.lessReport[0]['view']=="" || eCourseX.lessReport[0]['view']==null|| eCourseX.lessReport[0]['view']==0)eCourseX.lessReport[0]['view'] = Date.now();  
+		
+			//console.log("here 729");
+		if(eCourseX.lessReport[0]['access']==null || eCourseX.lessReport[0]['access']==0)eCourseX.lessReport[0]['access']=1;                                                                                        
+		//for(i=0;i<eCourseX.lessReport.length;i++){                                                                                                                        
+		//	console.log("testing eCoursex.lessReport");                                     
+		//	console.log(eCourseX.lessReport[i]);
+		//}
+		//console.log("eCourseX.lessReport is now " + eCourseX.lessReport[0]['start']);
+
+		//check for nonstandard quiz label
+		if(typeof newQuizlabel != "undefined" && newQuizlabel.length>1){
+			quizlabel = newQuizlabel;
+		}
+
+        allset = "yes";
+        resolve(allset);
+    });
+}
+
+function finalLoad(){
+    writeCourseTOC();
+	setTimeout(setChecks(),1000);
+	setTimeout(checkResume(),2000);
+		//GUI changes		  
+	if(SCORMcourse){
+		$("#takeNote").remove();
+	}					   
+	if (hasTextVersion === false){
+		$("#takeNote").remove();
+		$("#printVersion").remove();
+		$("#noMovie").removeAttr('accesskey');
+		$("#noMovie").css('display','none');
+		$("#noMovie2").removeAttr('accesskey');
+		$("#landmarkDiv4").removeAttr('accesskey');
+		$("#landmarkDiv2").removeAttr('accesskey');
+		$("#noMovie2").css('display','none');
+		
+		$("#landmarkDiv2").css('display','none');
+		$("#landmarkDiv4").css('display','none');	
+	}
+	if (hasVideo === false){
+		$("#vidSet").remove();
+		$("#accPlayButton").css('display','none');
+		$("#landmarkDivLastItem").css('display','none');
+		courseDesc = "legacySSEL";					
+	}
+	if (hasSearchFile === false){
+		$("#landmarkDiv3").css('display','none');
+		$("#tab3").css('display','none');
+	}
+	if ((numLessons == 1) || (courseDesc == "legacySSEL")){
+		$('.extoc').css('visibility','hidden');
+		$('.exhead').css('width','90%');
+	}
+	
+	//setTimeout(function(){if(eCourseX.mynotes.includes(myObjectID)){
+//		console.log("cleaning up notes");
+//		showNote(myExistingNote);
+//	}},2000);
+}
+
+
+
+function hasNumber(myString) {
+  return /\d/.test(myString);
+}
+
+function changeVLEimages(){
+ if(window.location.href.indexOf('createSearchDLC.htm#')>1 || window.location.href.indexOf("scorm.htm")>1 || window.location.href.indexOf("platform/builder")>1){
+	 //do nothing
+ }
+ else if ($('math').length >0) MathJax.typeset();
+}
+
+
+
+function writeRC_copyrite() {
+	document.write(rc_copyrite)
+}
+
+function showMovieName(movie) {
+    $("#rev2").html(movie);
+}
+
+
+///MOVIE and TOC functions
+var myHTML;
+$.each(lessonTitles, function (i, v) {		
+	$.merge(gMovieArray, window["movieArray" + (v[0].slice(-2))]);
+	
+});
+
+ /*!
+ * writeCourseTOC()
+ *
+ */
+
+ function writeCourseTOC() { 
+	 
+    if(SCORMcourse){  
+          for (n=0; n<=lessonTitles.length-1; n++) { 
+          if(lessonTitles[n][0].substring(lessonTitles[n][0].length-2)==mySCO){
+				$("#panel1").append('<div class="lheader" role="button" tabindex="0" aria-expanded="true"><div class="exhead"><h2 class="lessTitle">' + lessonTitles[n][1] + '</h2></div></div><span id="' + lessonTitles[n][0] + 'Nav" class="lessContainer">' + createLessonTOC(lessonTitles[n][0]) + '</span>');
+            } 
+               	$("#panel1").append(myHTML);
+
+    //		   	setChecks();
+          }
+     }
+     else{
+	//	$("#panel1").append('<div id="panelpopper"><button onClick="Javascript:popTOC(\'button\')" class="panelpopout" title="' + tocpop + '"></div>');
+    for (n=0; n<=lessonTitles.length-1; n++) { 
+        $("#panel1").append('<div class="lheader" role="button" tabindex="0" aria-expanded="true"><div class="exhead"><h2 class="lessTitle">' + lessonTitles[n][1] + '</h2></div><div class="exicon"><img class="extoc" src="rc_common/toc_hide.svg" aria-hidden="true" title="'+lhide+'"></div></div><span id="' + lessonTitles[n][0] + 'Nav" class="lessContainer">' + createLessonTOC(lessonTitles[n][0]) + '</span>');
+    } 
+    $("#panel1").append(myHTML);
+	//$("#panel1").append('<center><br><a href onclick="javascript:openOther(\'survey.htm\')" style="font-size:.8em;text-decoration:none;color:black">Rate this course</a><center>');
+    //		   setChecks();
+    scroll_position1 = $('#panel1').scrollTop();
+	
+	}
+}
+
+
+function rewriteCourseTOC() { 
+	document.getElementById("panel1").innerHTML = "";
+	
+    if(SCORMcourse){  
+          for (n=0; n<=lessonTitles.length-1; n++) { 
+          if(lessonTitles[n][0].substring(lessonTitles[n][0].length-2)==mySCO){
+				$("#panel1").append('<div class="lheader" role="button" tabindex="0" aria-expanded="true"><div class="exhead"><h2 class="lessTitle">' + lessonTitles[n][1] + '</h2></div></div><span id="' + lessonTitles[n][0] + 'Nav" class="lessContainer">' + createLessonTOC(lessonTitles[n][0]) + '</span>');
+            } 
+               	$("#panel1").append(myHTML);
+    //		   	setChecks();
+          }
+     }
+     else{
+	//	$("#panel1").append('<div id="panelpopper"><button onClick="Javascript:popTOC(\'button\')" class="panelpopout" title="' + tocpop + '"></div>');
+    for (n=0; n<=lessonTitles.length-1; n++) { 
+        $("#panel1").append('<div class="lheader" role="button" tabindex="0" aria-expanded="true"><div class="exhead"><h2 class="lessTitle">' + lessonTitles[n][1] + '</h2></div><div class="exicon"><img class="extoc" src="rc_common/toc_hide.svg" aria-hidden="true" title="'+lhide+'"></div></div><span id="' + lessonTitles[n][0] + 'Nav" class="lessContainer">' + createLessonTOC(lessonTitles[n][0]) + '</span>');
+    } 
+    $("#panel1").append(myHTML);
+	//$("#panel1").append('<center><br><a href onclick="javascript:openOther(\'survey.htm\')" style="font-size:.8em;text-decoration:none;color:black">Rate this course</a><center>');
+  
+    		   setChecks();
+   // scroll_position1 = $('#panel1').scrollTop();
+	
+	}
+}
+
+    /*!
+     * createLessonTOC(lesson:Array)
+     *
+     */
+function createLessonTOC(lesson) { 
+	//console.log("currentSelect is " + currentSelect);
+	var selectnum=-1;
+	if(typeof xtraselect != "undefined" && xtraselect != "none"){
+		for (i=0;i<selectoptions.length;i++){
+			if(selectoptions[i][0] == xtraselect){
+				currentSelect = selectoptions[i][1];
+				selectnum = i;
+				break;
+			} 
+		}
+	}
+	
+    var topicCounter = 0;
+    var myLesson = lesson.slice(-2); // 00, 01 etc
+    var myHTML = "";
+    /*! create array of all sections in the current lesson */
+    $.each(lessonTitles, function (i, v) {
+        if (v[0] == lesson) { 
+            myList = window["movieArray" + myLesson]; // movies277
+            autoTOC = myList;
+            mySectionArray = window["sectionArray" + myLesson];
+            $.each(mySectionArray, function (i, v) {
+                mySectionM = v[0]; // m277_0 
+                mySectionTitle = v[1]; // Introduction
+                var _html = "";
+                for (k = 0; k <= myList.length - 1; k++) {
+                    if (myList[k][2].indexOf('>') > -1){ 
+                        var start = (myList[k][2].lastIndexOf('>'))+1;
+                        var imgStripper = myList[k][2].substr(start); 
+                    }
+                    else {
+						var imgStripper = myList[k][2];
+					}
+                    if (mySectionM == myList[k][0].substring(0, myList[k][0].lastIndexOf("_"))) { // epg1v201_0
+                        /*! add movietimes */
+                        var movieTime = '<span class="movieTime2">' + ((myList[k][3]) ? ' ' + myList[k][3] : '') + '</span> ';
+                        /*! add spoken movietimes */
+                        var ariaMovieTime ='';
+                        if (myList[k][3] && myList[k][0].indexOf("select")==-1)	{
+							var ariaTime = myList[k][3].split(":"); 
+							if (ariaTime[0] == 1) ariaMovieTime =  ' ' + ariaTime[0]+' minute and ' +ariaTime[1]+' seconds';
+							else if (ariaTime[0] == 0) ariaMovieTime = ' ' + ariaTime[1]+' seconds';
+							else ariaMovieTime = ' ' + ariaTime[0]+' minutes and ' +ariaTime[1]+' seconds';
+						} 
+						else if (myList[k][3] && myList[k][0].indexOf("select")>-1)	{
+							
+							movieTime = '<span class="movieTime2">' + myList[k][3][selectnum] + '</span>';
+							var ariaTime = myList[k][3][selectnum].split(":"); 
+							if (ariaTime[0] == 1) ariaMovieTime =  ' ' + ariaTime[0]+' minute and ' +ariaTime[1]+' seconds';
+							else if (ariaTime[0] == 0) ariaMovieTime = ' ' + ariaTime[1]+' seconds';
+							else ariaMovieTime = ' ' + ariaTime[0]+' minutes and ' +ariaTime[1]+' seconds';
+						}  
+                            /*! create the movielinks */
+							if (myList[k][0] && myList[k][0].indexOf("select")>-1)	_html += '<div class="toc_item" id="mcheck_' + myList[k][0] +'"><div class="toc_link"><button class="allLinks movieLinks' + ((myList.length == 1) ? ' indentTopLevel' : '') + '" ' + 'onclick="javascript:showMovieDivCheck(\'' + myList[k][0] + '\');" id="mcheck_' + myList[k][0] + '" class="' + 'lessonButton' + ((myList.length != 1) ? ' indentChildLevel' : '') + '" aria-label="' + imgStripper + ariaMovieTime + '" lang="en-US">' + myList[k][2] + ' '+ currentSelect +' <img src="rc_common/multi-topic-toc.svg" width="14" height="14" alt="Mulitple versions" border="0">  '+  movieTime + '</button></div><div id="fave_' + myList[k][0] +'" class="faveDiv"><button class="faveBtn starOff" onClick="javascript: setFavorite(\'' + myList[k][0] + '\');" aria-label="Add to favorites" title="Add to favorites"></button></div></div>';   
+							else _html += '<div class="toc_item" id="mcheck_' + myList[k][0] +'"><div class="toc_link"><button class="allLinks movieLinks' + ((myList.length == 1) ? ' indentTopLevel' : '') + '" ' + 'onclick="javascript:showMovieDivCheck(\'' + myList[k][0] + '\');" id="mcheck_' + myList[k][0] + '" class="' + 'lessonButton' + ((myList.length != 1) ? ' indentChildLevel' : '') + '" aria-label="' + imgStripper + ariaMovieTime + '" lang="en-US">' + myList[k][2] + movieTime + '</button></div><div id="fave_' + myList[k][0] +'" class="faveDiv"><button class="faveBtn starOff" onClick="javascript: setFavorite(\'' + myList[k][0] + '\');" aria-label="Add to favorites" title="Add to favorites"></button></div></div>';  
+							myMovieTitle = myList[k][2];
+							
+                        //	eCourse.total++;
+                            topicCounter++;
+                    }
+                }
+			   // note: not sure why we are adding myList.length as a class in the span tag
+               //if there is one section in a lesson and the sectionTitle is blank then no title
+				if ((mySectionArray.length == 1) && ((mySectionTitle == "") || (mySectionTitle == " "))) {
+					_html = '<span class="sectionTitle" id="blankTitle">' + _html + '</span>';
+				}
+				//if there is one movie in a  section and the section title is not the same as the movie title, write the section title
+				else if ((topicCounter == 1) && (mySectionTitle != myMovieTitle)) {
+					_html = '<span class="sectionTitle" id="' + mySectionTitle + '"><h3>' + mySectionTitle + '</h3>' + _html + '</span>';
+				}	
+				//if there is one movie in a section and the section title is the same as the movie title or blank, no title
+				else if ((topicCounter == 1) && ((mySectionTitle == myMovieTitle) || (mySectionTitle == "") || (mySectionTitle == " "))) {
+					_html = '<span class="sectionTitle" id="' + mySectionTitle + '">' + _html + '</span>';
+				}
+				//if there's more than one movie in a section and the section title is blank, no title
+				else if ((topicCounter != 1) && ((mySectionTitle == "") || (mySectionTitle == " "))) {
+					_html = '<span class="sectionTitle" id="blankTitle">' + _html + '</span>';
+				}
+				//write the title
+				else if (topicCounter != 1) {
+					_html = '<span class="sectionTitle" id="' + mySectionTitle + '"><h3>' + mySectionTitle + '</h3>' + _html + '</span>';
+				}
+				//never gets to this
+				else {
+					_html = '<span class="sectionTitle">' + _html + '</span>';
+				}
+                myHTML += _html
+                topicCounter = 0;
+            });
+        }
+    });
+
+    return myHTML;
+}
+    
+/*
+function setNoTransurvey(){
+	eCourseX.transurvey[0] = false;
+}*/
+
+function continueMovie(direction) { 
+	//console.log("in continuemovie and direction is " + direction);
+	//console.log("myobjectid is " + myObjectID + " and SCOlast is " + SCOlast);
+	//if (myObjectID.indexOf("fade") == -1) { 
+	
+	$.each(gMovieArray, function (i, v) {
+			//v is the array for each movie, from rc_course.
+		if (myorigmov == v[0]) {
+			//if the call came from the back button, decrease i, otherwise, increase
+			mynum = (direction == "back") ? i - 1 : i + 1;
+			//if direction parameter (movie, not back) is specified, go to that movie
+			if ((direction) && (mynum == i + 1)) {
+				if(SCORMcourse){
+					if(myorigmov == SCOlast){
+						alert(endlesson);
+					} 
+					else {
+						showMovieDivCheck(direction);
+						return false;
+					}
+				}
+				else{
+					showMovieDivCheck(direction);
+					return false;
+				}
+			}
+			// else if not first movie in the course, display movie
+			else if (mynum > -1 && mynum < gMovieArray.length) {
+					// do not mark quiz complete only by using Next or Back button
+					//&& 
+			//	if (((v[2].indexOf('Quiz') == -1) && (v[2]!="Case Study") && (direction != "back"))) {
+				//	console.log("calling markMovieComplete from 647 for " + myObjectID);
+			//		markMovieComplete(myObjectID);
+			//	}
+			
+				
+				myTOCTopic = gMovieArray[mynum][2]; 
+				//myFinalMovie = gMovieArray[gMovieArray.length -2][0];
+				/*if (gMovieArray[mynum][0] == myFinalMovie && (direction != "back")){
+				//alert("You've reached the end of this course.");
+					markMovieComplete(myFinalMovie);
+				}*/
+
+				$('#notifier').text(myTOCTopic);
+				
+				//This is needed to ensure that navigation can't go from one SCO to the next in a true SCORM setting
+				if(SCORMcourse){
+					if(myorigmov == SCOlast && !direction){
+						alert(endlesson);
+					} 
+					else if(myorigmov == SCOfirst && direction=="back"){
+						alert(navbeg);
+					}
+					else {
+						showMovieDivCheck(gMovieArray[mynum][0]);
+						return false;
+					}
+				}
+				//if it's not true SCORM, navigation can just go from one lesson to the next (or previous) without issue
+				else{
+					showMovieDivCheck(gMovieArray[mynum][0]);
+					return false;
+				}
+			}
+			// else if first movie, display a message
+			else if (mynum == -1) {
+				alert(navbeg);
+			}
+		}
+	});
+}
+
+
+
+/*!
+ * checkResume()
+ *
+ * use the JSON object to check which intro to play
+ *
+ */
+function checkResume() {
+	//This is all needed to make resume work correctly both in a true scorm setting and in a vle/totara setting
+	if(SCORMcourse){
+		if (eCourseX.resume) {
+			//i think this needs to use currentMovie instead of bookmark, because bookmark could be in the wrong SCO.
+			$.each(eCourseX.currentMovie,function(index,value){
+				if(index==mySCO){
+					//need to double check to make sure movie still exists in current versions, which could have changed
+					showMovieDivCheck(eCodeLC+value,"first");
+				}
+				else{
+					showMovieDivCheck(SCOfirst,"first");
+				}
+			});
+		}
+		else showMovieDivCheck(SCOfirst,"first");
+	}
+	else if ((eCourseX.resume)) {
+		if(eCourseX.bookmark !=""){
+			
+			console.log("sending bookmark " + eCourseX.bookmark);
+			showMovieDivCheck(eCourseX.bookmark, "first");
+		}
+		else{
+			showMovieDivCheck(gMovieArray[0][0],"first");
+		}
+	} 
+	else {
+		showMovieDivCheck(gMovieArray[0][0],"first");
+	}
+	//console.log("1091 courseMoviescomplete is now " + courseMoviesComplete + " and movieComplete length is " + eCourseX.movieComplete.length);
+	if(eCourseX.movieComplete.length > 1) courseMoviesComplete += eCourseX.movieComplete.length;
+	//console.log("1093 courseMoviescomplete is now " + courseMoviesComplete);
+		
+}
+
+
+/*!
+ * startEcourse()
+ *
+ * start the course.
+ *
+ */
+function startEcourse() {
+	//This is needed because Start is different for a true SCORM setting, where it depends on which SCO they are in, versus a Totara setting where start will always play the very first movie.
+	if(SCORMcourse){
+		showMovieDivCheck(SCOfirst);
+	}
+	else {	
+		showMovieDivCheck(gMovieArray[0][0]);
+		sendXAPIstatement(xstarted,window.location.href +"/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum + "/" + myLessonX);
+	}
+}
+
+
+/*!
+ * resumeTopic()
+ *
+ * get the last movie from the JSON object.
+ */
+//not sure this is being called but it might be necessary for true scorm.
+function resumeTopic() {
+	topic = eCourseX.currentMovie[mylessonString]; 
+	if (topic) {
+		showMovieDivCheck(topic);
+		sendXAPIstatement(xresumed,window.location.href +"/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum +"/"+ mylessonString);
+	}
+	else {
+		alert(resnote);
+	}
+}
+
+
+
+/*!
+ * markLessonComplete(lesson:String)
+ *
+ * Add the lesson name to the lesson complete array in the JSON
+ * and update the data store.
+ */
+function markLessonComplete(lesson, myquizscore) { 
+	//console.log("in marklessoncomplete for " + lesson);
+	//lessCompDate = lesson + todayDate;
+	if(lesson.length > 2){
+		var shortlesson = lesson.slice(-2);
+	}
+	else var shortlesson = lesson;
+
+//	console.log("shortlesson is " + shortlesson);
+	var xlessrepkeys = Object.keys(eCourseX.lessReport);
+
+	for(a=0;a<xlessrepkeys.length;a++){
+//		console.log("a is " +a+" and num is " + eCourseX.lessReport[a]['num'] + " and shortlesson is " + shortlesson);
+		if(eCourseX.lessReport[xlessrepkeys[a]]['num']==shortlesson) {
+			var xshortlesson = xlessrepkeys[a];
+//		console.log("xshortlesson is " + xshortlesson);
+		}
+	}
+  //  console.log("xshortlesson is " + xshortlesson);
+	
+	if(eCourseX.lessReport[xshortlesson]['complete']==0 || eCourseX.lessReport[xshortlesson]['complete']=="" || eCourseX.lessReport[xshortlesson]['complete']==null || typeof eCourseX.lessReport[xshortlesson]['complete']=="undefined"){
+		
+		eCourseX.lessReport[xshortlesson]['complete']=Date.now();
+	}
+	
+	
+	if (jQuery.inArray(shortlesson, eCourseX.lessonComplete) < 0) {
+	
+		eCourseX.lessonComplete.push(shortlesson);
+		//console.log("ecourse moviecomplete is " + eCourseX.movieComplete);
+		//check for lesson number in the string, and clear those movies from big string
+		eCourseX.movieComplete  = eCourseX.movieComplete.filter(function(value){
+				return value.substring(0,2)!=shortlesson;
+			});
+			//console.log("after filterning ecourse moviecomplete is " + eCourseX.movieComplete);	
+			//console.log("resetting courseMoviesComplete");
+			if(eCourseX.movieComplete.length > 0)courseMoviesComplete = eCourseX.movieComplete.length;
+			else courseMoviesComplete = 0;
+			for(m=0;m<eCourseX.lessonComplete.length;m++){
+				var mymnum = "movieArray"+eCourseX.lessonComplete[m];
+				courseMoviesComplete += eval(mymnum).length;
+			}	
+			//console.log("1179 courseMoviesComplete is now " + courseMoviesComplete);
+		sendXAPIstatement(xsatisfied,window.location.href + "/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+shortlesson);
+		if(eCourseX.lprog !="100"){
+			sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+ myLessonX + '/100percent');
+			eCourseX.lprog = "100";
+		}
+		//if(!testarea) window.parent.SetDataChunk(JSON.stringify(eCourseX));
+		celebrate(shortlesson,"lesson");
+		//console.log("calling celebrate for " + shortlesson);
+		if(!testarea){
+			window.parent.SetDataChunk(JSON.stringify(eCourseX));
+			window.parent.CommitData();
+		} 
+	}   
+	//send lesson completion for true scorm
+	if (SCORMcourse) {
+		
+		window.parent.SetReachedEnd();
+		if(myquizscore)window.parent.SetScore(myquizscore,100,0);
+		else window.parent.SetScore(100,100,0);
+		window.parent.SetPassed();
+		window.parent.CommitData();
+	//	console.log("sent lesson completion");
+	}
+
+	//mark the required lesson complete in tracking string
+	if(typeof eCourseX.reqLessonsComplete[shortlesson] != "undefined" && eCourseX.reqLessonsComplete[shortlesson] == "no"){
+		eCourseX.reqLessonsComplete[shortlesson] = "yes";
+	}
+
+	if(Object.values(eCourseX.reqLessonsComplete).includes("no")){
+		//console.log("course not finished yet");
+		eCourseX.cprog = Math.round((courseReqMoviesComplete/reqdMovsTotal)*100);
+		if(eCourseX.cprog > 100) eCourseX.cprog = 100;
+	}
+	else {
+		//course is now complete
+	
+		if(VLEcourse){
+			//console.log("am i getting here?");
+			if(eCourseX.coursecomplete == 0)eCourseX.coursecomplete = Date.now();
+			window.parent.SetReachedEnd();
+			window.parent.SetScore(100,100,0);
+			window.parent.SetPassed();
+			window.parent.CommitData();
+			if(eCourseX.cprog !=100){
+				sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/100percentCourseComplete');
+				
+				eCourseX.cprog = 100;
+			}
+			
+			celebrate(shortlesson,"course");
+		}
+		
+	}
+	setLRSdata();
+	setChecks();
+	
+
+	
+	
+}
+
+/*!
+ * markMovieComplete(movie:String)
+ *
+ * Add the movie name to the movie complete array in the JSON,
+ * set graphical indicators
+ * and update the data store.
+ */
+var lessonQuarter;
+var courseQuarter;
+function markMovieComplete(movie) { 
+	
+	//console.log("in markmovieComplete");  
+  	if(movie.indexOf("../")==0){
+	  	movie = movie.substring(6);
+  	}
+	//calculate progress and send quarterly statements
+	var myLesson = movie.substring(0, movie.indexOf('_')); // epg1v202
+  	var myLessonNumber = myLesson.slice(-2); // 02
+	var shortMovie = movie.substring(eCode.length);
+	
+	if (jQuery.inArray(shortMovie, eCourseX.movieComplete) < 0  && !(eCourseX.lessonComplete.includes(myLessonNumber))) {
+
+		 eCourseX.movieComplete.push(shortMovie);
+		//check to compare length of movieComplete to gMovieArray-- for percentage statement
+		courseMoviesComplete++;
+		if(allreqdmovies[shortMovie.substring(0,2)].includes(shortMovie)) {courseReqMoviesComplete++;console.log("bumped coursereqdMovies by one");}
+		//console.log("increased courseMoviesComplete by one 1268");
+		 lessonMoviesComplete[1]++;
+
+	 	//console.log("cmc is " + courseMoviesComplete+ " and lmc is " + lessonMoviesComplete[1]);
+		var lessonTotal = (eval("movieArray" + myLessonNumber)).length;
+		lessonQuarter = Math.round(lessonTotal/4);
+		courseQuarter = Math.round((gMovieArray.length)/4);
+	
+		if(courseMoviesComplete > 0 && lessonMoviesComplete[1] > 0){
+			switch(lessonMoviesComplete[1]){
+				case lessonQuarter: 
+					sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+ myLessonX + '/25percent');
+					eCourseX.lprog = "25";
+					setLRSdata();
+					break;
+				case lessonQuarter*2:
+					sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+ myLessonX + '/50percent');
+					eCourseX.lprog = "50";
+					setLRSdata();
+					break;
+				case lessonQuarter*3:
+					sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+ myLessonX + '/75percent');
+					eCourseX.lprog = "75";
+					setLRSdata();
+					break;
+				case lessonTotal:
+					sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+ myLessonX + '/100percent');
+					//lessonMoviesComplete[1] = 0; console.log("resetting lessonMoviesComplete");
+					eCourseX.lprog = "100";
+					setLRSdata();
+					
+					break;
+			}
+		}
+		
+		if(courseMoviesComplete>0 && gMovieArray.length > 0) {
+				//console.log("1301 coursemoviecomplete is " + courseMoviesComplete);
+			//console.log("courseQuarter is " + courseQuarter);
+		
+			if(myLangCode == "en"){
+				//instead of always starting survey at 25%-- use that only if gMovieArray.length is over 28
+				//if gMovieArray.length is < 8, only pop the survey when it's complete.
+				//if it's between 9 and 18, pop the survey at 75% 
+				//if it's between 18 and 28, pop it at 50%.
+				//if it's greater than 28, pop it at 25%
+				
+				//new plan: if gMovieArray.length <18, pop only at completion.
+				//if gt 18, pop at 50 and again at 100.
+
+				switch(courseMoviesComplete){
+				/*	case courseQuarter: 
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/25percentCourse');
+						//eCourseX.cprog = "25";
+						
+						if((eCourseX.survey != true && !testarea && gMovieArray.length > 28)&& confirm("Complete a brief survey about this course?\nIf pop-ups are blocked, use the Survey link in the navigation bar.")){
+							window.open("survey.htm","_new",'top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+						}
+						document.getElementById('surveyButton').style.display="inline";
+						break;*/
+					case courseQuarter*2:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/50percentCourse');
+						//eCourseX.cprog = "50";
+						if((eCourseX.survey != true && !testarea && gMovieArray.length > 18)&& confirm("Complete a brief survey about this course?\nIf pop-ups are blocked, use the Survey link in the navigation bar.")){
+							window.open("survey.htm","_new",'top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+						}
+						document.getElementById('surveyButton').style.display="inline";
+						break;
+				/*	case courseQuarter*3:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/75percentCourse');
+						//eCourseX.cprog = "75";
+						if((eCourseX.survey != true && !testarea && gMovieArray.length > 8)&& confirm("Complete a brief survey about this course?\nIf pop-ups are blocked, use the Survey link in the navigation bar.")){
+							window.open("survey.htm","_new",'top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+						}
+						break;*/
+					case gMovieArray.length:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/100percentCourseViewed');
+						//eCourseX.cprog = "100";
+						eCourseX.coursecomplete = Date.now();
+						if((eCourseX.survey != true && !testarea)&& confirm("Complete a brief survey about this course?\nIf pop-ups are blocked, use the Survey link in the navigation bar.")){
+							window.open("survey.htm","_new",'top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+						}
+						break;
+				}
+			}
+			else{
+				switch(courseMoviesComplete){
+					case courseQuarter: 
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/25percentCourse');
+						//eCourseX.cprog = "25";
+						break;
+					case courseQuarter*2:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/50percentCourse');
+						//eCourseX.cprog = "50";
+						break;
+					case courseQuarter*3:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/75percentCourse');
+						//eCourseX.cprog = "75";
+						break;
+					case gMovieArray.length:
+						sendXAPIstatement(xprogressed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/100percentCourseViewed');
+						//eCourseX.cprog = "100";
+						eCourseX.coursecomplete = Date.now();
+						break;
+				}
+			}
+			//console.log("courserMC is " + courseReqMoviesComplete + " and reqMovsTtl is " + reqdMovsTotal);
+			eCourseX.cprog = Math.round((courseReqMoviesComplete/reqdMovsTotal)*100);
+			if(eCourseX.cprog > 100) eCourseX.cprog = 100;
+			
+		}
+		
+	}
+	if(lessonMoviesComplete[1] == lessonQuarter*2){	
+		if((eval("movieArray" + myLessonX)).length > 12){
+			  if(!encourage50){
+				 encourage("50%");
+			  }
+		}
+	}
+	//end progress statements
+	
+	//update reqTopicsComplete
+	if(reqTopicsComplete.includes(movie) ){
+		reqTopicsComplete[reqTopicsComplete.indexOf(movie)][1] = "yes";
+
+	}
+	//calculate lesson completion
+	if(lessonCheck=="reqTopics"){
+		var notdone = 0;
+		for(i=0;i<reqTopicsComplete.length;i++){
+			
+			if(reqTopicsComplete[i][1]=="yes") notdone++;
+		}
+		if(notdone=reqTopicsComplete.length) {
+			markLessonComplete(myLesson);
+		}
+	}
+	
+	else if (lessonCheck=="viewAll"  && !(hasquiz.includes(myLessonX))){
+		
+		var alldone = true;
+		for(a=0;a<allreqdmovies[myLessonX].length;a++){
+			if(!eCourseX.movieComplete.includes(allreqdmovies[myLessonX][a])){
+				alldone = false;
+				break;
+				}	
+		}
+		if(alldone){
+			markLessonComplete(myLessonX);
+		}
+		
+
+	}
+	
+	
+	setLRSdata();
+	
+	setChecks();
+}
+
+
+
+/*!
+ * setChecks()
+ *
+ * Instantly find the recently played item and mark it completed.
+ * Also make sure completed items are marked as well
+ */
+
+function setChecks() { 
+	//console.log("in setChecks front");
+	$('.playing button').attr('aria-pressed', 'true');
+	
+	if (eCourseX) {
+		$.each(eCourseX.lessonComplete, function(i,v){
+			//for anything here, go thru moviearray+v and mark each movie complete.
+			$.each(eval("movieArray"+v), function(s,j){
+				
+				$('#mcheck_' + j[0] + ' button').attr('aria-describedby', 'secretChk');
+				$('#mcheck_' + j[0] + ' .toc_link').addClass('checked');
+			});
+		});
+		
+		$.each(eCourseX.movieComplete, function (i, v) {
+			var vx = eCodeLC+v;
+		//	console.log("in setChecks for " + vx);
+			$('#mcheck_' + vx + ' button').attr('aria-describedby', 'secretChk');
+			$('#mcheck_' + vx + ' .toc_link').addClass('checked');
+		//	if (tocWindow && !tocWindow.closed) {
+		//		//alert("about to reload?");				
+		//		tocWindow.location.reload();
+		//	}
+		});
+	}
+	if (eCourseX) {
+		$.each(eCourseX.favorites, function (i, v) {
+			var vx = eCodeLC+v;
+			$('#fave_' + vx + ' button').attr('aria-describedby', 'secretFave');
+			$('#fave_' + vx + ' button').removeClass('starOff');
+			$('#fave_' + vx + ' button').addClass('starOn');
+			$('#fave_' + vx + ' button').attr('title', faveoff);
+			$('#fave_' + vx + ' button').attr('aria-label', faveoff);
+		});
+	}
+	
+	if (eCourseX) {
+		$.each(eCourseX.mynotes, function (i, v) {
+			//console.log(v);
+			var vx = eCodeLC+v;
+			$('#fave_' + vx + ' button').attr('aria-describedby', 'secretNote');		
+			$('#fave_' + vx + ' button').removeClass('starOff');
+			$('#fave_' + vx + ' button').removeClass('starOn');
+			$('#fave_' + vx + ' button').addClass('noteShow');
+			$('#fave_' + vx + ' button').attr('title',noteshow);
+			$('#fave_' + vx + ' button').attr('aria-label',noteshow);
+		});
+	}
+
+	//$('.playing').removeClass('playing');
+}
+
+function setNoteIcon(){
+	$('#fave_' + myObjectID + ' button').attr('aria-describedby', 'secretNote');
+	$('#fave_' + myObjectID + ' button').removeClass('starOff');
+	$('#fave_' + myObjectID + ' button').removeClass('starOn');
+	$('#fave_' + myObjectID + ' button').addClass('noteShow');
+	$('#fave_' + myObjectID + ' button').attr('title', noteshow);
+	$('#fave_' + myObjectID + ' button').attr('aria-label', noteshow);
+}
+
+function unsetNoteIcon(){
+	if(eCourseX.favorites.indexOf(myObjectID)>-1){
+		$('#fave_' + myObjectID + ' button').attr('aria-describedby', 'secretFave');
+		$('#fave_' + myObjectID + ' button').removeClass('noteShow');
+		$('#fave_' + myObjectID + ' button').addClass('starOn');
+		$('#fave_' + myObjectID + ' button').attr('title', faveoff);
+		$('#fave_' + myObjectID + ' button').attr('aria-label', faveoff);	
+	}
+	else{
+	    $('#fave_' + myObjectID + ' button').removeAttr('aria-describedby');
+		$('#fave_' + myObjectID + ' button').removeClass('noteShow');
+		$('#fave_' + myObjectID + ' button').addClass('starOff');	
+		$('#fave_' + myObjectID + ' button').attr('title', faveon);
+		$('#fave_' + myObjectID + ' button').attr('aria-label', faveon);
+	}		
+}
+
+function setFavorite(myFave){
+	var shortFave = myFave.substring(eCode.length);
+
+	if ($('#fave_' + myFave + ' button').hasClass('noteShow')){ 
+	//open correct popup depending on page type
+	showMovieDivCheck(myFave);
+		setTimeout(function(){
+			if(eCourseX.textonly == 'ON'|| myType.indexOf("html")>-1){
+				document.getElementById('userNote').scrollIntoView(true);
+			}
+			else if(myType == "vid"){
+				if(transWindow && !transWindow.closed){
+					transWindow.document.getElementById('userNote').scrollIntoView(true);
+				}
+				else {
+					openTranscript('note');
+				} 
+			}
+			/*if(myType === 'html1'){		
+				openPrintVersion(myMovieTitle);
+			}
+			else if(myType === 'html2'){
+				openPrintVersion2(myMovieTitle);
+			}
+			else if(myType === 'html3'){		
+				openPrintVersionEmbed(myMovieTitle);
+			}
+			else {
+				showMovieDivCheck(myFave);
+				openTranscript('note');
+			}*/
+		},500);
+	}
+	else {
+		//check if current movie is in favorites already
+		if($.inArray(shortFave,eCourseX.favorites)!=-1){
+			//if it's already a favorite, unfavorite it
+			sendXAPIstatement(xunfavorited,window.location.href  + "/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+myLessonX + "/" + myObjectID);
+			for(var i=0;i<eCourseX.favorites.length; i++){
+				if(eCourseX.favorites[i] == shortFave){
+					eCourseX.favorites.splice(i,1);
+				}
+			}
+			setLRSdata();
+			$('#fave_' + myFave + ' button').removeClass('starOn');	
+			$('#fave_' + myFave + ' button').addClass('starOff');	
+			$('#fave_' + myFave + ' button').attr('title',faveon);	
+			$('#fave_' + myFave + ' button').attr('aria-label',faveon);
+			$('#fave_' + myFave + ' button').removeAttr('aria-describedby');
+		}
+		else{
+			//add to eCourseX.favorites array
+			sendXAPIstatement(xfavorited,window.location.href  + "/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+myLessonX + "/" + myFave);
+			eCourseX.favorites.push(shortFave);
+			setLRSdata();
+			$('#fave_' + myFave + ' button').removeClass('starOff');
+			$('#fave_' + myFave + ' button').addClass('starOn');
+			$('#fave_' + myFave + ' button').attr('title', faveoff);
+			$('#fave_' + myFave + ' button').attr('aria-label', faveoff);	
+			$('#fave_' + myFave + ' button').attr('aria-describedby', 'secretFave'); 
+		}
+	}
+}
+
+
+
+/* Expand Lesson in TOC */
+$(document).ready(function() { 
+	if (courseDesc != "legacySSEL"){
+    	$(".lheader").click(function() {
+     	   $header = $(this); 
+     	   $icon = $header.find('img');
+      	   $content = $header.next();
+        
+     	   $content.slideToggle("800", function () {
+           		if ($content.is(":visible")) {
+              		$icon.attr('src', hideImg);
+			  		$icon.attr('title', lhide);
+              		$header.attr('aria-expanded', 'true');
+					$('.lessContainer').css('display','inline')
+          		}
+          		else {
+             		$icon.attr('src', showImg);
+			  		$icon.attr('title', lshow);
+            		$header.attr('aria-expanded', 'false');
+          		}
+       		});
+    	});
+	}
+});
+
+
+
+/*!
+ * highlightTOC(mov:String)
+ *
+ * Highlights ToC items that are currently playing. Also tags that item with a 'playing' class
+ *
+ */
+function highlightTOC(mov, splash) { 
+	//console.log("highlghting " + mov);
+	
+	$(' .toc_link').removeClass('playing');
+//	alert("highlightoc");
+	setChecks();
+	/*! mark as being played right now*/
+	
+	$('#mcheck_' + mov).css('color', 'black');
+	$('#mcheck_' + mov +' .toc_link').addClass('playing');
+//	$('#mcheck_' + mov +' button').attr('aria-current','page'); -- might not need this if aria-pressed is used?
+											  
+	if(splash == "first"){	
+		var currentItem = document.getElementById($('.playing').parent().attr('id'));
+		alternativeScrollIntoView(currentItem);
+	}
+	else{
+		scroll_position1 = $('#panel1').scrollTop(); 
+		var currentItem = document.getElementById($('.playing').parent().attr('id'));
+		alternativeScrollIntoView(currentItem);
+	}
+}
+
+
+function alternativeScrollIntoView(TOCitem) { 	
+	//console.log("alt scroll " + TOCitem);
+	if (TOCitem == null) return;
+	//	alert(TOCitem.getClientRects()[0]);
+	if (TOCitem.getClientRects()[0]) {
+		$("#panel1").scrollTop(0);
+		var bottomActual = TOCitem.getClientRects()[0].bottom;
+		var myPanelHt = $("#panel1").height();
+		if (bottomActual == 0) return;
+			
+		var scrollPoint = bottomActual + 100;
+		if (scrollPoint > $("#panel1").height()){
+			$("#panel1").scrollTop(scrollPoint - 350);
+		}
+	}
+}
+
+/* visual indication of 50% and 100% lesson complete */
+var encourage50 = false;
+function encourage(howfar){
+
+	if (howfar == "50%") {
+		encourage50 = true;
+		$('#bottomRow').addClass('lesshalfDone');
+		$('#encourage').html(completemsg1 + howfar + completemsg2);
+	}
+	$('#encourage').css('display','block');
+		
+	setTimeout(function(){
+		$('#encourage').css('display','none');
+		$('#bottomRow').removeClass('lesshalfDone');
+	}, 2000);
+	encourage50 = false;
+}
+
+
+function celebrate(lesson, mymsg){
+	var lessontotal = (eval("movieArray" + lesson)).length;
+	//course complete message
+	if (mymsg == "course"){
+		$('#encourage').html(completecrsmsg);
+		$('#bottomRow').addClass('crsDone');
+		$('#encourage').css('display','block');
+	}
+	//Lesson complete message
+	//else if ((mymsg == "lesson") && (lessontotal > 1)  && (courseDesc != "recLess")){
+	else if ((mymsg == "lesson") && (lessontotal > 1)){
+		$('#encourage').html(completemsg);
+		$('#bottomRow').addClass('lessDone');
+		$('#encourage').css('display','block');
+	}
+
+		setTimeout(function(){
+			$('#encourage').css('display','none');
+			$('#bottomRow').removeClass('lessDone crsDone');
+		}, 2000);
+
+}
+
+ /* POPUP FUNCTIONS*/
+var transWindow;
+//TRANSCRIPT WINDOW
+function openTranscript(source) { 
+	var noteInProgress = checkMyNoteState();
+	if(noteInProgress){
+		if (confirm(noteprogressClick)){
+			$('#noteEntry').css('display', 'none');
+			makeNewNote = false;
+			openTransSafe(source);	
+		}
+		else{
+			window.document.getElementById("userNote").focus();
+		}
+
+	}
+	else{
+		openTransSafe(source);	
+	}
+   
+	
+}
+
+function openTransSafe(source){
+	var myPage = "rc_common/transcript_win.htm";
+	
+	if(source === "button") {
+	  transWindow = window.open(myPage,'Transcript','top=100,left=50,width=600,height=700,resizable=1,scrollbars=yes');
+	  transWindow.focus();
+	  sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/transcriptWindow/" + myPage );	
+  }
+
+  else if (source === "note")  {
+	
+			transWindow = window.open(myPage,'Transcript','top=100,left=50,width=600,height=700,resizable=1,scrollbars=yes');
+			setTimeout(function(){$("#noteEntry",transWindow.document).css('display','block');
+				transWindow.document.getElementById("userNote").focus();},1000);
+			
+			
+  }
+
+  else if(source === "function") {  
+	  //if the window is already open, update the document -->
+	  if(transWindow && !transWindow.closed) {  
+			transWindow = window.open(myPage,'Transcript','top=100,left=50,width=600,height=700,resizable=1,scrollbars=yes');
+			transWindow.focus();
+	  }
+	 
+  }	
+  if(SCORMcourse){
+	$("#takeNote2", transWindow).remove();
+  }
+}
+
+function openTransDemoACC(){
+	transWindow = window.open("rc_common/transcript_win.htm",'Transcript','top=100,left=50,width=600,height=700,resizable=1,scrollbars=yes');
+	transWindow.focus();
+}
+
+function hideNote(){
+	$('#notesSection').css('display', 'none');
+	$('#noteEntry').css('display', 'none');
+}
+
+
+
+
+/* load a note in the open transcript window for HTML items */
+function loadNoTranscript() {
+	
+	if(transWindow && !transWindow.closed) {
+		if (eCourseX.textonly == 'ON') {
+			$('#content', transWindow.document).html('<p style="margin-left:20px;">' + videooffmsgpop + '</p>');
+		}
+		else {
+			$('#content', transWindow.document).html('<p style="margin-left:20px;">' + notvideomsgpop + '</p>');
+		}
+		$('#takeNote2', transWindow.document).css('display','none');
+		$('.pbtn', transWindow.document).css('display','none');
+		$('.hider', transWindow.document).css('display','none');
+		$('#notesSection', transWindow.document).css('display','none');
+		$('#noteEntry', transWindow.document).css('display','none');
+		transWindow.document.getElementById('takeNote2').disabled=true;
+		transWindow.document.title = transtitle;
+		transWindow.blur();
+	}
+}
+
+
+
+function openPrintVersion(pageTitle) {
+	var noteInProgress = checkMyNoteState();
+	if(noteInProgress){
+		if (confirm(noteprogressClick)){
+			var page = "rc_common/tt_printversion.htm";
+			myPage = page;
+			 printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+			 printWindow.focus();
+			 sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + mov);
+		}
+		else  document.getElementById("userNote").focus();
+	}
+  else{
+	var page = "rc_common/tt_printversion.htm";
+   	myPage = page;
+   	printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   	printWindow.focus();
+   	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + myObjectID);
+  }
+
+}
+function openPrintVersion2(pageTitle) {
+   	var page = "rc_common/tt_printversion2.htm";
+   	var noteInProgress = checkMyNoteState();
+	if(noteInProgress){
+		
+		if (confirm(noteprogressClick)){
+ 		  	var page = "rc_common/tt_printversion2.htm";
+   			myPage = page;
+   			printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   			printWindow.focus();
+   			sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + myObjectID);
+		}
+		else  document.getElementById("userNote").focus();
+	}
+	else{
+		var page = "rc_common/tt_printversion2.htm";
+   		myPage = page;
+   		printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   		printWindow.focus();
+   		sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + myObjectID);
+	}
+}
+function openPrintVersionEmbed(pageTitle) {
+	var noteInProgress = checkMyNoteState();
+	if(noteInProgress){
+		if (confirm(noteprogressClick)){
+ 		  	var page = "rc_common/tt_printversionEmbed.htm";
+   			myPage = page;
+   			printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   			printWindow.focus();
+   			sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + myObjectID);
+		}
+		else  document.getElementById("userNote").focus();
+	}
+	else{
+		var page = "rc_common/tt_printversionEmbed.htm";
+   		myPage = page;
+   		printWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   		printWindow.focus();
+   		sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/printVersion/" + myObjectID);
+	}
+}
+/* IS THIS NEEDED? */
+function openCourseNotes() {
+    var page = eCode +".pdf";
+   	newWindow = window.open(page,'PrintDoc','width=600,height=700,resizable=1,scrollbars=yes');
+   	newWindow.focus();
+   	sendXAPIstatement(xopened,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum + "/slidesnotes");
+}
+/* IS THIS NEEDED? */
+function openPrintDoc(mypage, linktype) {
+   	if(linktype == "san") var page = "https://vle.sas.com/vle/data/printdocs/" + mypage;
+   	else var page = "../" + mypage;
+   	newWindow = window.open(page,'PrintDoc','width=600,height=700,resizable=1,scrollbars=yes');
+   	newWindow.focus();
+   	sendXAPIstatement(xopened,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum + "/" + mypage);
+}
+
+
+function openOther(page) {
+   	var myPage;
+    if ((window.location.href.indexOf("transcript") != -1)  || (window.location.href.indexOf("printversion") != -1)){
+		myPage = "../" + page;
+	} 
+   	else myPage = page; 
+   	newWindow = window.open(myPage,'Other','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   	newWindow.focus();
+   	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openOther/" + myObjectID);
+}
+
+function openOther2(page) {
+   	var myPage;
+   	myPage = page;
+   	if(window.location.href.indexOf('printversion')!= -1 || window.location.href.indexOf('transcript')!= -1) myPage = '../' + myPage;
+  	newWindow = window.open(myPage,'Other2','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+   	newWindow.focus();
+   	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openOther/" + myObjectID);
+}
+
+function openOther3(page) {
+	var myPage;
+	myPage = page;
+	if(window.location.href.indexOf('printversion')!= -1 || window.location.href.indexOf('transcript')!= -1) myPage = '../' + myPage;
+   newWindow = window.open(myPage,'Other2','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openOther/" + myObjectID);
+}
+
+function openSearchPractice(page) {
+   	newWindow = window.open(page,'Other','top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+   	newWindow.focus();
+   	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openSearchResult/" + myObjectID);
+}
+
+function openOtherWide(page) {
+	var myPage;
+	myPage = page;
+	newWindow = window.open(myPage,'Other','top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openOther/" + myObjectID);
+}
+
+function openOtherWide2(page) {
+	var myPage;
+	myPage = page;
+	newWindow = window.open(myPage,'Other2','top=0,left=0,width=950,height=950,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/openOther/" + myObjectID);
+}
+
+function openDemoSteps(page) {
+	newWindow = window.open(page,'Steps','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/demoSteps/" + page);
+}
+
+function openSimSteps(page) {
+	newWindow = window.open(page,'Steps','top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/simSteps/" + page);
+}
+
+function openSummary(mySummary){
+	if (narrWindow && narrWindow.open && !narrWindow.closed) narrWindow.close();
+	newWindow = window.open(mySummary,'Summary','top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/summary/" + mySummary);
+}	
+
+function openQuiz(myHTMLQuiz){
+	if (narrWindow && narrWindow.open && !narrWindow.closed) narrWindow.close();
+	newWindow = window.open(myHTMLQuiz,quizlabel,'top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/quiz/" + myHTMLQuiz);
+}	
+
+function openHelp(){
+	var myHelp = "rc_common/rc_faq.htm";
+	newWindow=window.open(myHelp,'Course Information and FAQ','');
+	if (alreadyopen) {
+         alreadyopen = false;
+      }
+	alreadyopen = true;
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/helpPage/" );
+}
+
+function openCPFS(page) {
+	var myPage;
+	myPage = page;
+	newWindow = window.open(myPage,'Other','top=0,left=0,width=1280,height=720,resizable=1,scrollbars=yes');
+	newWindow.focus();
+    sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/CPFS/" + page);
+}
+
+function openExerPDF(myExercise){
+	newWindow = window.open(myExercise,'Exercise','top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/exercisePDF/" + myExercise);
+}
+
+function openExerHTML(file){
+	newWindow = window.open(file,'Exercise','top=0,left=0,width=900,height=900,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/exercisePDF/" + myExercise);
+}
+
+function openSim(page) {
+	var myPage = page;
+	newWindow = window.open(myPage,'Other','top=0,left=0,width=1280,height=720,resizable=1,scrollbars=yes');
+	newWindow.focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+ myLessonX + "/simulation/" + page);
+}
+
+function openAddInfo(){
+	//myObjectID
+	
+	openOther(myMovieDetails);
+}
+
+//Grace Lesson jump menu for printdocs
+
+function drpDown() {
+	document.getElementById("myDropdown").classList.toggle("show");
+}
+window.onclick = function (event) {
+	if (!event.target.matches('#myDropdown')) {
+		var dropdowns = document.getElementsByClassName("dropdown-content");
+		var i;
+		for (i = 0; i < dropdowns.length; i++) {
+			var openDropdown = dropdowns[i];
+			if (openDropdown.classList.contains('show')) {
+				openDropdown.classList.remove('show');
+			}
+		}
+		if(document.getElementById("myDropdown") != null && document.getElementById("myDropdown").classList.contains('show')){
+			document.getElementById("myDropdown").classList.remove('show');
+		}
+	}
+
+}
+document.addEventListener('click', (e) => {
+  
+	 if (document.getElementById("myDropdown") != null && !e.target.closest('.dropbtn')) document.getElementById("myDropdown").classList.remove('show');
+   
+	 // if (!profileButton.contains(e.target)) profileNav.classList.add('hidden')
+   })
+
+///open Accessible Code, tables, etc. from text version
+
+var myCodeID = "";
+var myCode = "";
+var myCodewindow = null;
+
+function openCodewindow(myID){
+	myCodeID = myID;
+	myCode =  document.getElementById(myID).innerHTML;
+   
+		  if((myCodewindow == null) || (myCodewindow.closed)){   
+		   if (window.location.href.indexOf("transcript") != -1 || window.location.href.indexOf("printversion") != -1) myCodewindow = window.open("accessible.htm" ,"accessible","top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes");    
+		   else if(window.location.href.indexOf("vle.sas.com") != -1 && window.location.href.indexOf("index") !=-1)myCodewindow = window.open("../rc_common/accessible.htm" ,"accessible");
+			else myCodewindow = window.open("rc_common/accessible.htm" ,"accessible");
+		  }
+	  else if(myCodewindow != null){
+			  myCodewindow.close();
+		   if (window.location.href.indexOf("transcript") != -1 || window.location.href.indexOf("printversion") != -1)myCodewindow = window.open("accessible.htm" ,"accessible","top=0,left=0,width=600,height=700,resizable=1,scrollbars=yes");    
+			else if(window.location.href.indexOf("vle.sas.com") != -1&& window.location.href.indexOf("index") !=-1)myCodewindow = window.open("../rc_common/accessible.htm" ,"accessible");
+			else myCodewindow = window.open("rc_common/accessible.htm" ,"accessible");
+		  }
+   }
+
+
+
+function writeAccessibleCode(){
+   //alert(opener.myCode);
+  	var myCodeDiv = document.getElementById("codeGoesHere");
+ 	//alert(myCodeDiv.innerHTML);
+  	myCodeDiv.innerHTML = opener.myCode;   
+}
+
+var MynewWind;
+function openImage(img,x,y){ 
+   	var output; 
+	// if(VLEcourse )img="../" + img;
+	// if (newWind != null) newWind.close(); 
+   	x=eval(x+50);
+  	y=eval(y+80);
+   	MynewWind = window.open("","Details","HEIGHT="+y+",WIDTH="+x+",scrollbars,resizable,top=5,left=5"); 
+   	output="<HTML><HEAD><TITLE>Details</TITLE></HEAD><BODY BGCOLOR='#FFFFFF' ";  
+   	output+="onLoad='this.focus()' onBlur='opener.newWind=null'><CENTER>"; 
+   	output+="<IMG ALT='Full window' SRC='"+img+"'><BR>&nbsp;"; 
+   	output+="<FORM name='form1'><INPUT TYPE='button' name='Button' VALUE='Close' onClick='self.close()'>"; 
+   	output+="</FORM></CENTER></BODY></HTML>"; 
+   	MynewWind.document.write(output); 
+   	MynewWind.document.close(); 
+} 
+
+var swapopt = "default";
+function swapSteps(){
+ if(swapopt=="default"){
+	$('.optone').show();
+	$('.defaultopt').hide();
+	$('#swapper').onclick = "javascript:swapSteps('defaultopt');";
+	document.getElementById('swapper').innerHTML = "Show " +  swapOpts[0];
+	swapopt = 'optone';
+ }
+ else if(swapopt=='optone'){
+	$('.optone').hide();
+	$('.defaultopt').show();
+	$('#swapper').onclick = "javascript:swapSteps('optone');";
+	document.getElementById('swapper').innerHTML = "Show " + swapOpts[1];
+	swapopt='default';
+ }
+}
+
+/// function for RC exercise
+
+function showSolutionInSteps(fromPrint) {
+	
+	if(fromPrint){
+		if(fromPrint=="show"){
+		
+			var myOtherBUttons = document.getElementsByClassName("solnB");
+			
+			for(i=0;i<myOtherBUttons.length;i++){
+				$(myOtherBUttons[i]).html(hsbtn);
+				$(myOtherBUttons[i]).attr('aria-label','Hide solution within numbered steps');
+			}
+			$('.soln').css('display','block');
+		}
+			
+		else if(fromPrint=="hide"){
+	
+			var myOtherBUttons = document.getElementsByClassName("solnB");
+			
+				for(i=0;i<myOtherBUttons.length;i++){
+					$(myOtherBUttons[i]).html(ssbtn);
+					$(myOtherBUttons[i]).attr('aria-label','Show solution within numbered steps');
+				}
+				$('.soln').css('display','none');
+			}
+		else{
+			var mybuttonid = '#solnButton'+fromPrint;
+			var mycurrID = $(mybuttonid).closest('div .forPrint2').attr('id');
+			
+			var mysolns = document.getElementById(mycurrID).querySelectorAll('.soln');
+			//console.log("mysolns is " + mysolns.length);
+			for(i=0;i<mysolns.length;i++){
+				if($(mysolns[i]).css('display') != "block") $(mysolns[i]).css('display','block');
+				else $(mysolns[i]).css('display','none');
+			}
+			if ($(mybuttonid).html() != hsbtn){
+				
+				$(mybuttonid).html(hsbtn);
+				$(mybuttonid).attr('aria-label','Hide solution within numbered steps');
+				
+			}
+			else {
+				
+				$(mybuttonid).html(ssbtn);
+				$(mybuttonid).attr('aria-label','Show solution within numbered steps');
+			}
+		}
+		
+	}
+	else{
+		if ($('.soln').css('display') != "block"){
+			/*! if solution is hidden, open it and change gif */
+			$('.soln').css('display','block');
+			$('#solnButton').html(hsbtn);
+			$('#solnButton').attr('aria-label','Hide solution within numbered steps');
+			sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/solution/"+myObjectID);	
+		}
+		else {
+			/*! otherwise hide solution and change gif */
+			$('.soln').css('display','none');
+			$('#solnButton').html(ssbtn);
+			$('#solnButton').attr('aria-label','Show solution within numbered steps');
+		}
+	}
+	
+}
+
+
+function showSolutionOnPage(myClass) {
+	$('.'+myClass).each(function () {
+		if ($(this).css('display') != "block"){
+			/*! if solution is hidden, open it and change gif */
+			$(this).css('display','block');
+			if (myClass == 'soln-1') $('#firstButton').html(hsbtn);
+			if (myClass == 'soln-2') $('#secondButton').html(hsbtn);
+			if (myClass == 'soln-3') $('#thirdButton').html(hsbtn);
+			sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/solution/"+myObjectID);
+		
+		} 
+		else {
+			/*! otherwise hide solution and change gif */
+			$(this).css('display','none');
+			if (myClass == 'soln-1') $('#firstButton').html(ssbtn);
+			if (myClass == 'soln-2') $('#secondButton').html(ssbtn);
+			if (myClass == 'soln-3') $('#thirdButton').html(ssbtn);
+		}
+	});
+}
+
+function showQuizStepsOnPage(whichSteps) {  
+   $('.Qstep'+whichSteps).each(function () {
+      	if ($(this).css('display') != "block"){
+			/*! if solution is hidden, open it and change gif */
+			$(this).css('display','block');
+			$('#show'+whichSteps).html("Hide Steps");
+			sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/quizSteps/"+myObjectID);
+      	} 
+		else {
+			/*! otherwise hide solution and change gif */
+			$(this).css('display','none');
+			$('#show'+whichSteps).html("Show Steps");	
+		}
+	});
+}		
+
+
+function checkMyAnswer() {
+	$("#NoAnswer, #Correct, #Incorrect").hide();
+	$("#NoAnswer, #Correct, #Incorrect").attr("tabindex","-1");
+	var isCorrect = 0;
+	var myAnswer = "";
+	for (i = 0; i < document.getElementsByName('ques1').length; i++) {
+		if (document.getElementsByName('ques1')[i].checked) {
+			myAnswer = document.getElementsByName('ques1')[i].value;
+			myAnswer = myAnswer.toLowerCase();
+			if (myAnswer == CorrAns) {
+				$("#Correct").show();
+				$("#Correct").focus();
+				isCorrect = 1;
+			} 
+			else {
+				$("#Incorrect").show();
+				$("#Incorrect").focus();
+			}
+		}
+	}
+	if (myAnswer === "") {
+		$("#NoAnswer").show();
+		$("#NoAnswer").focus();
+	}
+	sendXAPIstatement(xanswered,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+myLessonX +"/" + myObjectID + "/" + myAnswer,isCorrect);
+}
+
+function checkMyAnswerSA(form) {
+	$("#NoAnswer, #Correct, #Incorrect").hide();
+	$("#NoAnswer, #Correct, #Incorrect").attr("tabindex","-1");
+	var isCorrect = 0
+	var myAnswer = "";
+	for (var i = 0; i < document.getElementsByName('ques1').length; i++) {
+		if (document.getElementsByName('ques1')[i].checked) {
+			myAnswer += document.getElementsByName('ques1')[i].value + " ";
+		}
+	}
+	myAnswerString = myAnswer.replace(/\s/g, '');
+	if (myAnswerString == CorrAns) {
+		$("#Correct").show();
+		$("#Correct").focus();
+		isCorrect = 1;
+	} 
+	else if ((myAnswerString != CorrAns) && (myAnswerString != "")) {
+		$("#Incorrect").show();
+		$("#Incorrect").focus();
+	} 
+	else {
+		$("#NoAnswer").show();
+		$("#NoAnswer").focus();
+	}
+	sendXAPIstatement(xanswered,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+myLessonX +"/" + myObjectID + "/" + myAnswer,isCorrect);
+}
+
+function checkMyAnswerMatch(form) {
+	$("#NoAnswer, #Correct, #Incorrect").hide();
+	$("#NoAnswer, #Correct, #Incorrect").attr("tabindex","-1");
+	var isCorrect = 0
+	var myAnswer = "";
+	
+	$("input[type='text']").each(function () {
+		myAnswer = myAnswer + " " + $(this).val();
+	});
+	
+	myAnswerString = (myAnswer.replace(/\s/g, '')).toLowerCase();
+	if (myAnswerString == CorrAns) {
+		$("#Correct").show();
+		$("#Correct").focus();
+		isCorrect = 1;
+	} 
+	else if ((myAnswerString != CorrAns) && (myAnswerString != "")) {
+		$("#Incorrect").show();
+		$("#Incorrect").focus();
+	} 
+	else {
+		$("#NoAnswer").show();
+		$("#NoAnswer").focus();
+	}	
+	sendXAPIstatement(xanswered,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+myLessonX +"/" + myObjectID + "/" + myAnswer,isCorrect);
+}
+
+function showSyntaxAnswer() {
+	$("#syntaxCorrect").hide();
+	$("#syntaxHint").hide();
+	$("#syntaxCorrect").show();
+	$("#syntaxCorrect").focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+myLessonX +"/showAnswer/" + myObjectID );
+}
+
+function showAnswer() {
+	$("#Correct").hide();
+	$("#Correct").show();
+	$("#Correct").focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+ "/" + myLessonX + "/showAnswer/"+myObjectID);
+}
+
+function showHint() {
+	$("#syntaxHint").hide();
+	$("#syntaxCorrect").hide();
+	$("#syntaxHint").show();
+	$("#syntaxHint").focus();
+	sendXAPIstatement(xinteracted,window.location.href +'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+ "/" + myLessonX + "/showHint/"+myObjectID);
+}
+
+/*!
+ * reloadMyAnswer
+ */
+function reloadMyAnswer() {
+	$("#NoAnswer").hide();
+	$("#Correct").hide();
+	$("#Incorrect").hide();
+}
+
+/*!
+ ************************************************************************************************
+ quiz functions 
+ ***********************************************************************************************/
+var passingScore=80;
+var myScore=0;
+var score = 0;
+
+function setAnswerFlex(form) {  
+	var currElt;
+	var currSelection;
+	var numQues = userAns.length;
+	
+	for (i=0; i<numQues; i++) {
+		radio_name = "ques" + [i+1];
+		var oRadio = document.forms[0].elements[radio_name]; 
+		for(var j = 0; j < oRadio.length; j++) {  
+			if(oRadio[j].checked) {  
+				userAns[i] =  oRadio[j].value; 
+				break; 
+			} 
+			else { 
+				userAns[i] = "x";
+			}
+		}   
+	} 
+}
+
+
+
+function getScore() { 
+	window.opener.opener.wrongAnswers = "**item/correct/user/**";
+	var blnCorrect; 
+	var numQues = correctAns.length; 
+	for (i=0; i<numQues; i++) {
+		blnCorrect = false;
+		if (ans[i] == correctAns[i]){
+			score++;
+			blnCorrect = true;
+		}
+		else{
+			window.opener.opener.wrongAnswers += "*" + (i+1) + "/" + correctAns[i] + "/" + ans[i] + "*";
+		}
+		//**************************
+		var selectedAns="";
+		if (!ans[i]) selectedAns = "x";
+		else selectedAns = ans[i];
+		//**************************
+	} 
+	decimalScore = Math.round(score/numQues*100); 
+	pctscore = decimalScore + "%";
+	myScore = decimalScore; 
+	if (myScore >= passingScore) {
+		//call storeQuizResult on same level as this page
+		storeQuizResult();
+	}
+	else { 
+		passFailingQuiz();
+	}
+}
+
+function storeQuizResult() {   
+   		//get myObjectID value from base page myObjectID
+    myObjectID = window.opener.opener.myObjectID; // m345_0_a
+		//get moduleShort value by substringing 
+	moduleShort = myObjectID.substring(0, myObjectID.indexOf('_')); // m345
+	 	//call down to base page in order to make the jQuery work right???
+  	window.opener.opener.BasePageStoreQuizResult(myObjectID, moduleShort, myScore);
+}
+
+//send xAPI statement that quiz has been failed
+function passFailingQuiz() {   
+   		//get myObjectID value from base page myObjectID
+    myObjectID = window.opener.opener.myObjectID; // m345_0_a
+		//get moduleShort value by substringing 
+	moduleShort = myObjectID.substring(0, myObjectID.indexOf('_')); // m345
+	 	//call down to base page in order to make the jQuery work right???
+  	window.opener.opener.sendFailStatement(myObjectID, moduleShort, myScore);
+}
+
+//here is the fail-quiz statement
+function sendFailStatement(myObjectID, moduleShort, myScore){
+	sendXAPIstatement(xfailed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/' + moduleShort + '/quiz/' + wrongAnswers,false,myScore);
+}
+
+function BasePageStoreQuizResult(myObjectID, moduleShort, myScore) {   
+    if (jQuery.inArray(myObjectID, eCourseX.movieComplete) < 0) {
+		var shortmov = myObjectID.substring(eCode.length);
+		eCourseX.movieComplete.push(shortmov);
+	} 
+
+	 markLessonComplete(moduleShort, myScore);
+	if(typeof wrongAnswers == 'undefined') wrongAnswers="*$*";
+		sendXAPIstatement(xpassed,window.location.href  + '/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+'/'+moduleShort + '/quiz/' + wrongAnswers,true,myScore);
+	setLRSdata();
+	setChecks();
+
+}
+
+function closeQuiz(){
+	window.opener.close();
+}
+
+function setCompleteNoQuiz(msg) { 
+	// IS THIS NEEDED? IT's required if it gets called, but might not be called anymore
+	if (SCORMcourse || VLEcourse) {
+      // SCORM: do SCORM calls -->  // CHECK SCORM
+        window.parent.SetReachedEnd();
+		window.parent.SetScore(100,100,0);
+	    window.parent.SetPassed();
+		window.parent.CommitData();
+	    if (msg) alert(msg);
+		if(VLEcourse){
+			myLesson = myObjectID.substring(0, myObjectID.indexOf("_")); 
+	    	markLessonComplete(myLesson);
+		 }
+	}    
+	// non-SCORM: mark lesson complete  -->
+    else {  
+	    myLesson = myObjectID.substring(0, myObjectID.indexOf("_")); 
+	    //check if there are multiple versions of this course- if so, add userLev to end of myLesson
+		// if(userLev != '0' && eCode != 'ECTVAAS') myLesson += userLev;
+		 markLessonComplete(myLesson);
+    }
+}
+
+function markQues(quesnum) {
+	myCorrect = "<img src='../rc_common/qcorrect.png' width='17' height='40' border='0' alt='Correct'>";
+	myWrong = "<img src='../rc_common/qwrong.png' width='17' height='40' border='0' alt='Incorrect'>";
+   	// Captivate cs or quiz 
+   	if (opener.user_array) {
+	  // if answer is C for correct 
+      	if (opener.answer_array[quesnum]=="C") { 
+         	document.write(myCorrect);
+      	}
+		// else if answer is W for Way Wrong, Dude 
+      	else {
+         	document.write(myWrong);
+      	}
+   	}
+    else if (myCourseType=="practiceExam") {
+      	if (ans[quesnum-1] == correctAns[quesnum-1]) { 
+         	document.write(myCorrect);
+      	}
+      	else {
+         	document.write(myWrong);
+      	}
+   	}
+  	// SPEL-style case study or quiz 
+   	else if (window.opener.opener) {
+      	if (ans[quesnum-1] == correctAns[quesnum-1]) { 
+         	document.write(myCorrect);
+      	}
+      	else {
+         	document.write(myWrong);
+      	}
+   	}
+   	// for marking Captivate case study or quiz passed with no answers entered 
+   	else return;
+}
+
+
+function writeYanswerCanswer(quesnum) { 
+     // Captivate case study or quiz 
+	if (opener.user_array) {
+		document.write('<strong>Your answer: ' + opener.user_array[quesnum] +'<br>Correct answer: ' + opener.correct_array[quesnum] +'</strong><br><br>');	
+	}
+	else if (myCourseType=="practiceExam") { 
+		document.write('<strong>Your answer: <font color="#003399">' + ans[quesnum-1] +'</font><br>Correct answer: <font color="#003399">' + correctAns[quesnum-1] +'</font></strong><br><br>');
+	}
+	else if (window.opener.opener) { 
+		// for SPEL-style case study or quiz 
+		document.write('<strong>' +yanswer+': <font color="#003399">' + ans[quesnum-1] +'</font><br>' +canswer+': <font color="#003399">' + correctAns[quesnum-1] +'</font></strong><br><br>');
+	}
+		// for marking Captivate case study or quiz passed with no answers entered 
+	else return;
+}
+
+
+function openWideResults(docname) {   
+	newWindow = window.open(docname,'Results','top=0,left=0,width=725,height=650,resizable=yes,scrollbars=yes');
+	if (alreadyopen) {
+		alreadyopen = false
+	}
+	alreadyopen = true
+	if (newWindow != null) {
+		if (newWindow.opener == null) {
+			newWindow.opener = self;
+		}
+	}
+}
+
+
+function writeQuizScore() {
+	document.write(myScore + "%");
+}
+
+
+function writeQuizFeedback() {
+	if (window.opener.opener){
+		myQuizPage = window;
+	}
+	else {
+		myQuizPage = window.opener;
+	}
+		
+	if (quizPlace == "finalcase"){
+		if (myQuizPage.myScore >= passingScore) {
+			if (window.opener.opener.VLEcourse || window.opener.opener.SCORMcourse) quizFeedback = passquiz;
+			else quizFeedback = passquizfinal;
+		} 
+		else {
+			quizFeedback = failcase;
+		}
+	}
+
+	else {
+		if (myQuizPage.myScore >= passingScore) { 
+			quizFeedback = passquiz;
+		} 
+		else {
+			quizFeedback = failquiz;
+		}
+	}
+	document.write(quizFeedback);
+}
+
+
+function markAllQuizzesComplete(){
+
+	for(i=0;i<lessonTitles.length;i++){
+			var mynum = lessonTitles[i][0].slice(-2);
+			window.opener.eCourseX.reqLessonsComplete[mynum] =  "yes";
+			var mylessKeys = Object.keys(window.opener.eCourseX.lessReport);
+				for(a=0;a<mylessKeys.length;a++){
+					if(window.opener.eCourseX.lessReport[a]['complete']==0 || window.opener.eCourseX.lessReport[a]['complete']==null){
+						window.opener.eCourseX.lessReport[a]['complete'] = Date.now();
+						window.opener.eCourseX.lessReport[a]['debug'] = Date.now();
+						if(window.opener.eCourseX.lessReport[a]['start']==0 || window.opener.eCourseX.lessReport[a]['start']==null)window.opener.eCourseX.lessReport[a]['start']==Date.now();
+						
+					}
+
+				}
+			if(!window.opener.eCourseX.lessonComplete.includes(mynum))	window.opener.eCourseX.lessonComplete.push(mynum);
+			window.opener.setLRSdata();
+			window.opener.setChecks();
+		
+	}
+	eCourseX.cprog = 100;
+	eCourseX.coursecomplete = Date.now();
+	eCourseX.movieComplete = [];
+	if(confirm("Record Completion in Totara?")==true){
+		window.opener.parent.SetReachedEnd();
+		window.opener.parent.SetScore(100,100,0);
+		window.opener.parent.SetPassed();
+		window.opener.parent.CommitData();
+	}
+}
+
+
+function markReqLessonsComplete(){
+	if(reqLessons.length >0) {
+		for(i=0;i<reqLessons.length;i++){
+			window.opener.eCourseX.reqLessonsComplete[reqLessons[i]] =  "yes";
+				if(!window.opener.eCourseX.lessonComplete.includes(reqLessons[i])) window.opener.eCourseX.lessonComplete.push(reqLessons[i]);
+				window.opener.setLRSdata();
+				window.opener.setChecks();
+		}
+	}
+	else{
+		for(i=0;i<lessonTitles.length;i++){
+			//If it's not a Resources lesson, and if it's not listed as "Optional" in the title, include it
+			var nokeyword = true;
+			if(!optlesstitles.includes(lessonTitles[i][0])){
+				
+				for(j=0;j<optkeywords.length;j++){
+					if(lessonTitles[i][1].indexOf(optkeywords[j])>-1) nokeyword = false;
+				}
+			}
+			else nokeyword = false;
+			if(nokeyword ){
+				var mynum = lessonTitles[i][0].slice(-2);
+				window.opener.eCourseX.reqLessonsComplete[mynum] =  "yes";
+				var mylessKeys = Object.keys(window.opener.eCourseX.lessReport);
+				for(a=0;a<mylessKeys.length;a++){
+					if(window.opener.eCourseX.lessReport[a]['complete']==0 || window.opener.eCourseX.lessReport[a]['complete']==null){
+						window.opener.eCourseX.lessReport[a]['complete'] = Date.now();
+						window.opener.eCourseX.lessReport[a]['debug'] = Date.now();
+						if(window.opener.eCourseX.lessReport[a]['start']==0 || window.opener.eCourseX.lessReport[a]['start']==null)window.opener.eCourseX.lessReport[a]['start']==Date.now();
+						
+					}
+
+				}
+				if(!window.opener.eCourseX.lessonComplete.includes(mynum))	window.opener.eCourseX.lessonComplete.push(mynum);
+				window.opener.eCourseX.coursecomplete = Date.now();
+				window.opener.setLRSdata();
+				window.opener.setChecks();
+			}
+
+		}
+	}	
+	eCourseX.cprog = 100;
+	eCourseX.coursecomplete = Date.now();
+	eCourseX.movieComplete = [];
+	if(confirm("Record Completion in Totara?")==true){
+		window.opener.parent.SetReachedEnd();
+		window.opener.parent.SetScore(100,100,0);
+		window.opener.parent.SetPassed();
+		window.opener.parent.CommitData();
+	}
+}
+
+//actually marks lesson complete, not just quiz, despite function name
+function markThisQuizComplete() {  
+    //get myObjectID value from base page myObjectID
+    myObjectID = window.opener.myObjectID; // epg1v201_1_a
+	//get moduleShort value by substringing 
+	moduleShort = myObjectID.substring(0, myObjectID.indexOf('_')); // epg1v101
+	var mylessKeys = Object.keys(window.opener.eCourseX.lessReport);
+	for(a=0;a<mylessKeys.length;a++){
+		if(window.opener.eCourseX.lessReport[a]['num']==myLessonX){
+			window.opener.eCourseX.lessReport[a]['debug'] = Date.now(); 
+		}
+	}
+	
+	window.opener.markLessonComplete(window.opener.myLessonX);
+	//sendxapi statement for debug
+	//call down to base page in order to make the jQuery work right???
+  window.opener.BasePageStoreQuizResult(myObjectID, moduleShort,'100');
+}
+
+
+
+function writeQuizLaunchNote(){
+	if(SCORMcourse || VLEcourse){
+		document.getElementById("SCORMnote").innerHTML = quizwhyscorm;
+	}
+	else{
+		document.getElementById("SCORMnote").innerHTML = quizwhy;
+	}
+}
+
+
+/*!
+ * jQuery Cookie Plugin
+ * https://github.com/carhartl/jquery-cookie
+ *
+ * Copyright 2011, Klaus Hartl
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/GPL-2.0
+ */
+(function ($) {
+	$.cookie = function (key, value, options) {
+		
+		// key and at least value given, set cookie...
+		if (arguments.length > 1 && (!/Object/.test(Object.prototype.toString.call(value)) || value === null || value === undefined)) {
+			options = $.extend({}, options);
+			
+			if (value === null || value === undefined) {
+				options.expires = -1;
+			}
+			
+			if (typeof options.expires === 'number') {
+				var days = options.expires,
+				t = options.expires = new Date();
+				t.setDate(t.getDate() + days);
+			}
+			
+			value = String(value);
+			
+			return (document.cookie = [
+					encodeURIComponent(key), '=', options.raw ? value : encodeURIComponent(value),
+					options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+					options.path ? '; path=' + options.path : '',
+					options.domain ? '; domain=' + options.domain : '',
+					options.secure ? '; secure' : ''
+				].join(''));
+		}
+		
+		// key and possibly options given, get cookie...
+		options = value || {};
+		var decode = options.raw ? function (s) {
+			return s;
+		}
+		 : decodeURIComponent;
+		
+		var pairs = document.cookie.split('; ');
+		for (var i = 0, pair; pair = pairs[i] && pairs[i].split('='); i++) {
+			if (decode(pair[0]) === key)
+				return decode(pair[1] || ''); // IE saves cookies with empty string as "c; ", e.g. without "=" as opposed to EOMB, thus pair[1] may be undefined
+		}
+		return null;
+	};
+	
+})(jQuery);
+
+
+/*NO LONGER NEEDED?
+function checkForString(stringPrefix) {
+	var stringPrefixEquals = stringPrefix + '='; // lessonComplete=, movieComplete=
+	var myCookie = document.cookie;
+	if (myCookie.length > 0) {
+		begin = myCookie.indexOf(stringPrefixEquals);
+		if (begin != -1) {
+			begin += stringPrefixEquals.length;
+			end = myCookie.indexOf(';', begin);
+			if (end == -1)
+				end = myCookie.length;
+			return unescape(myCookie.substring(begin, end));
+		}
+	}
+	return null;
+}*/
+
+//SCORM exit function
+function Exit(){ 
+    //  alert('You are exiting the lesson.');
+	if (SCORMcourse){
+		window.parent.CommitData();
+		window.parent.SetNavigationRequest("continue");
+		window.parent.ConcedeControl();
+	 } 
+	window.close();
+}
+
+//COURSE DATA SET/GET FUNCTIONS
+
+/*!
+ * createCoursexapiJSON()
+ *
+ * method to create the JSON with default values.
+ *
+ */
+
+function createCoursexapiJSON(c) {
+	//console.log("I'm here, right? and c is " + c);
+	//lessonComplete tracks which lessons are complete, used for checkmarks in the container
+	//reqLessonsComplete tracks which lessons are required (based on rc_course) and whether or not they are complete yet. 
+	//movieComplete tracks which movies/topics are complete, used for checkmarks in the container
+	var mylessrep = {};
+	for(i=0;i<lessonTitles.length;i++){
+		var shortless = lessonTitles[i][0].slice(-2);
+		//console.log("shortless is " + shortless);
+		mylessrep[i] = {"num":shortless, "start":0, "complete":0,"view":0,"access":0};
+	
+	}
+	
+	return {
+		'eCode' : c,
+		'resume' : false,
+		'coursestart':0,
+		'coursecomplete':0,
+		'accessC':1,
+		'lessonComplete' : [],
+		'reqLessonsComplete' : {}, 
+		'lessReport':mylessrep,
+		'movieComplete' : [],
+		'lprog':'0',
+		'cprog':'0',
+		'currentMovie' : {},
+		'favorites':[],
+		'mynotes':[], // stores a list of movies that have notes
+		'survey':false,
+		'transurvey':[true,''],
+		'mymode':'light',
+		'myfontsize':'100',
+		'playrate':'0',
+		'captions':'disabled',
+		'autoadvance':'OFF',
+		'autoplay':'ON',
+		'countdown':'ON',
+		'textonly':'OFF',
+		'bookmark':'',
+		'timestamp':'',
+		'xtra':'none'
+	};
+	
+}
+
+function resetxapi(c) {
+	
+	const mydatenow = new Date();
+	const mytimenow = mydatenow.getTime();
+	var mylessrep = {};
+	for(i=0;i<window.opener.lessonTitles.length;i++){
+		var shortless = lessonTitles[i][0].slice(-2);
+		//console.log("shortless is " + shortless);
+		mylessrep[i] = {"num":shortless, "start":0, "complete":0,"view":0,"access":0};
+	
+	}
+	return {
+		'eCode' : c,
+		'resume' : false,
+		'coursestart':0,
+		'coursecomplete':0,
+		'accessC':1,
+		'lessonComplete' : [],
+		'reqLessonsComplete' : {}, 
+		'lessReport':mylessrep,
+		'movieComplete' : [],
+		'lprog':'0',
+		'cprog':'0',
+		'currentMovie' : {},
+		'favorites':[],
+		'mynotes':[], // stores a list of movies that have notes
+		'survey':false,
+		'transurvey':[true,''],
+		'mymode':'light',
+		'myfontsize':'100',
+		'playrate':'0',
+		'captions':'disabled',
+		'autoadvance':'OFF',
+		'autoplay':'ON',
+		'countdown':'ON',
+		'textonly':'OFF',
+		'bookmark':'',
+		'timestamp':mytimenow,
+		'xtra':'none'
+	};
+}
+/*!
+ * setLRSdata(myLRSdata:JSON)
+ * 
+ * sends data to LRS for progress tracking
+ * unless it is a "true SCORM" course--
+ * in that case, data is stored on the LMS
+ *
+ */
+ 
+ function setLRSdata(){
+	const dateNow = new Date();
+	const timeNow = dateNow.getTime();
+	eCourseX.timestamp = timeNow;
+	
+	myactivityIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/" + eCode;
+	if(SCORMcourse){
+		window.parent.SetDataChunk(JSON.stringify(eCourseX));
+		window.parent.CommitData();
+	}
+	else if(typeof useXAPI != "undefined" && useXAPI == true && actor2.name != "Default User" && !testarea && actor2.name != "00000"){
+		window.parent.SetDataChunk(JSON.stringify(eCourseX));
+		window.parent.CommitData();
+        ajaxstring=myactivityIRI+'&*'+actor2.account.name+'/'+fakeid+'('+JSON.stringify(eCourseX)+')';
+		$.ajax({
+			type:"POST",
+			url: xAPIsetURL,
+			xhrFields: { withCredentials:true},
+			
+			data:{
+				//"actorAccount":actor2.account.homePage,
+				//"actorName": actor2.account.name,
+				//"activityPath":  myactivityIRI,
+                "mydata":ajaxstring
+				//"progressContent": JSON.stringify(eCourseX)
+			},
+			success: function(returncode){
+				if(returncode) console.log("progress saved." );	
+				else console.log("error returned from php file: progress not saved.")
+			},
+			error: function(){
+				console.log("an error has occurred. progress was not saved.");
+			}
+		});
+		
+	}
+ }
+
+
+ /*!
+ *
+ * sendXAPIstatement
+ *
+ * general function to send statement
+ * to LRS via php library.
+ *
+ */
+ 
+ function sendXAPIstatement(myVerb,myXObject,myXresult,myScore){
+	if(myXresult==false){myXresult = 0;}
+	else if (myXresult==true){myXresult=1;}
+	//console.log("myXObject is " + myXObject);
+	if(typeof useXAPI != "undefined" && useXAPI == true){
+		if(window.opener){
+            ajaxstring=myXObject+'&*'+window.opener.actor2.name+'/'+fakeid+'('+myVerb.verb+')'+myVerb.verbDisplay['en-US'];
+        }
+        else{
+            ajaxstring=myXObject+'&*'+window.actor2.name+'/'+fakeid+'('+myVerb.verb+')'+myVerb.verbDisplay['en-US'];
+        }
+        $.ajax({
+            type:"POST",
+            url:xAPIurl,
+            data:{
+               'mydata':ajaxstring
+            },
+
+        });	
+		/*if(window.opener){
+			$.ajax({
+				type:"POST",
+				url:xAPIurl,
+				data:{
+					//"actorAccount":window.opener.actor2.account.homePage,
+					"actorName":window.opener.actor2.account.name,
+					"verb":myVerb.verb,
+					"verbDisplay": myVerb.verbDisplay['en-US'],
+					"object":myXObject,
+				//	"result":myXresult,
+				//	"resultScore":{"raw":myScore}
+				},
+	
+			});	
+		}
+		else{
+			$.ajax({
+				type:"POST",
+				url:xAPIurl,
+				data:{
+					//"actorAccount":actor2.account.homePage,
+					"actorName":actor2.account.name,
+					"verb":myVerb.verb,
+					"verbDisplay": myVerb.verbDisplay['en-US'],
+					"object":myXObject,
+					//"result":myXresult,
+					//"resultScore":{"raw":myScore}
+				},
+	
+			});		
+		}*/	
+	}
+	//console.log("verb type is " + typeof(myVerb.verb) + " and verbDisplay type is " + typeof(myVerb.verbDisplay.en-US) + " and type of object is " + typeof(myXObject) + " and typeof result is " + typeof(myXresult));
+//	console.log("statement: " +myVerb.verb.substring(myVerb.verb.lastIndexOf("/")) + " " + myXObject + " " + myXresult + " " + myScore );
+}
+ 
+function showProgress(){
+	var currentdata;
+	myactivityIRI = document.referrer.substring(0,document.referrer.indexOf(".com/"))+ ".com/"+ eCode;
+	if(window.opener.SCORMcourse){
+		currentdata = window.opener.parent.GetDataChunk();
+		$("#progressString").html("User ID is " + window.opener.actor2.account.name + " and progress string is " + currentdata);
+		//alert("User ID is: " + window.opener.actor2.account.name + "\n" + "and progress string is " + currentdata);
+	}
+	else if(window.opener.actor2.name != "Default User" && window.opener.actor2.name != "00000"){
+		var lmsdata = window.opener.parent.GetDataChunk();
+		console.log("lmsdata is " + lmsdata);
+        ajaxstring=myactivityIRI+'&*'+window.opener.actor2.account.name+'/'+fakeid;
+		$.ajax({
+			type: "POST",
+			url:xAPIgetURL,	
+			xhrFields : {
+				withCredentials : true
+			},
+			data:{
+			//	"actorAccount":window.opener.actor2.account.homePage,
+				//"actorName":window.opener.actor2.account.name,
+				//"activityPath": myactivityIRI
+                'mydata':ajaxstring
+			},
+			
+			crossDomain : true,
+			success: function(data){
+				//report back with data from LL state
+				console.log("data is " + data);
+				currentdata =  JSON.parse(data);
+				var currentdatastring = "";
+				$.each(currentdata,function(key, value){
+					
+					var littlevaluestring = key + ": ";
+					 if(typeof(value)== 'object'){
+						
+						for(const[key1, value1] of Object.entries(value)){
+							console.log("am i in here? " + key1 + " value is " + value1);
+							if(key=="lessReport"){
+								
+								for(const[key2, value2] of Object.entries(value1)){
+									 littlevaluestring += key2 + ": " + value2 + ",";
+								}
+								littlevaluestring += "<br>"
+							}
+							else if(key=="reqLessonsComplete") littlevaluestring += key1+": "+ value1 + ",<br>";
+							else littlevaluestring += value1 + ",<br>";
+						}
+						
+						currentdatastring += littlevaluestring + "<br>";
+					}
+					else currentdatastring += key + ": " + value + "<br>";
+			});
+				
+				//alert("User ID is: " + window.opener.actor2.account.name + "\n" + "and progress string is " + data);
+				$("#progressString").html("User ID is " + window.opener.actor2.account.name + " and progress string is:<br> " + currentdatastring);
+			},
+			error: function(){
+				currentdata = "Error pulling data from LRS";
+				alert("There was an error pulling data from the LRS.");
+			}
+		
+		});
+	
+	} 
+	else alert("Unable to detect user ID");
+}
+
+function clearProgress(){
+	myactivityIRI = window.opener.location.href.substring(0,window.opener.location.href.indexOf(".com/"))+ ".com/"+ eCode;
+	
+		if(confirm(window.opener.xapiclear)){
+		if(SCORMcourse){
+			window.opener.parent.SetDataChunk("cleared");
+			window.parent.CommitData();
+		}
+		else if(typeof useXAPI != "undefined" && useXAPI == true && useXAPI == true && window.opener.actor2.name != "Default User" && window.opener.actor2.name != "00000"){
+		//need to clear all notes first
+		
+		//then clear data string
+		eCourseX = resetxapi(eCode);
+        ajaxstring=myactivityIRI+'&*'+window.opener.actor2.account.name+'/'+fakeid+'('+JSON.stringify(eCourseX)+')';
+			$.ajax({
+				type:"POST",
+				url: xAPIsetURL,
+				xhrFields: { withCredentials:true},
+			
+				data:{
+				//	"actorAccount":window.opener.actor2.account.homePage,
+				//	"actorName": window.opener.actor2.account.name,
+				//	"activityPath":  myactivityIRI,
+                'mydata':ajaxstring
+					//"progressContent": JSON.stringify(eCourseX)
+				},
+				crossDomain : true,
+				success: function(){
+					window.opener.location.reload();
+					self.close();
+				},
+				error: function(){
+					console.log("unable to clear course data.");
+				}
+			});
+			window.opener.parent.SetDataChunk(JSON.stringify(eCourseX));
+			window.parent.CommitData();
+			for(i=0;i<window.opener.eCourseX.mynotes.length;i++){
+				var myshorty = window.opener.eCourseX.mynotes[i];
+				var myfullname = window.opener.eCodeLC+myshorty;
+				var noteLesson = myshorty.substring(0, myshorty.indexOf("_"));
+				var myNotePageIRI = window.opener.location.href.substring(0,window.opener.location.href.indexOf(".com/"))+ ".com/"+ window.opener.eCode + "/" + noteLesson + "/" + myfullname;
+				ajaxstring=myNotePageIRI+'&*'+window.opener.actor2.account.name+'/'+fakeid;
+				$.ajax({
+					type: "POST",
+					url:xAPIclearURL,
+					//timeout:6000,
+					xhrFields : {
+						withCredentials : true
+					},
+					data:{
+						//"actorAccount":window.opener.actor2.account.homePage,
+					//	"actorName":window.opener.actor2.account.name,
+					//	"activityPath": myNotePageIRI
+					'mydata':ajaxstring
+							},
+					crossDomain : true,
+					success: function(){
+						
+					},
+					error: function(){
+						console.log("unable to clear course notes.");
+					}
+				});
+			}
+		}
+	}
+}
+
+
+
+function statusCheck(){
+	if(window.location.href.indexOf("stage")!=-1){
+		var myurl = "https://learn.sas.com/vle/data/xapi/statusCheckstage.php";
+	}
+	else if(window.location.href.indexOf("dev")!=-1){
+		var myurl = "https://learn.sas.com/vle/data/xapi/statusCheckdev.php";
+	}
+	else myurl = "https://learn.sas.com/vle/data/xapi/statusCheck.php";
+	$.ajax({
+		type: "POST",
+		url:myurl,	
+		xhrFields : {
+			withCredentials : true
+		},
+		
+		crossDomain : true,
+		success: function(data){
+			//report back with msg from ll
+			alert("all seems fine");
+			alert("data is " + data);
+			
+			if(data.substr(0,2)=="NO"){
+				//console.log(data.substr(0,2));
+				alert(xapiNote);
+			}
+			
+		},
+		error: function(){
+			alert(xapiNote2);
+			useXAPI = false;
+		}
+		
+	});
+}
+
+//BEGIN NOTE-TAKING Code
+
+
+var makeNewNote=false;
+
+function checkNoteStatus(){
+	if(window.location.href.indexOf("transcript")>0 || window.location.href.indexOf("printversion")>0) {
+		var shortName = window.opener.myObjectID.substring(window.opener.eCode.length);
+		if(window.opener.SCORMcourse){
+			$('#takeNote2').removeClass('noteOn');
+			$('#takeNote2').removeClass('noteOff');
+			$('#takeNote2').addClass('noteNope');
+			document.getElementById('takeNote2').disabled=true;
+		}
+		else{
+		//if a note exists, show it
+			if (window.opener.eCourseX.mynotes.indexOf(shortName)>-1){
+				if(document.getElementById('noTranscript')){
+					document.getElementById('notesSection').style.display="none";
+					document.getElementById('noteEntry').style.display='none';
+					$('#takeNote2').removeClass('noteOn');
+					$('#takeNote2').removeClass('noteOff');
+					$('#takeNote2').addClass('noteNope');
+					document.getElementById('takeNote2').disabled=true;
+				}
+				else{
+					document.getElementById('notesSection').style.display='block';
+					if(window.opener.makeNewNote){
+						document.getElementById('noteEntry').style.display='block';
+						document.getElementById('userNote').focus();
+						document.getElementById('userNote').scrollIntoView(true);
+					}
+					else {
+						document.getElementById('noteEntry').style.display='none';
+					}
+
+					$('#takeNote2').removeClass('noteOff');
+					$('#takeNote2').removeClass('noteNope');
+					$('#takeNote2').addClass('noteOn');
+					document.getElementById('takeNote2').disabled=false;
+				}
+			}
+			else if(window.opener.makeNewNote && (window.opener.myType.indexOf("html")<0 || window.document.href.indexOf("printversion")>0)){
+				document.getElementById('notesSection').style.display='none';
+				document.getElementById('noteEntry').style.display='block';
+				document.getElementById('userNote').focus();
+				document.getElementById('userNote').scrollIntoView(true);
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteNope');
+				$('#takeNote2').addClass('noteOff');
+				document.getElementById('takeNote2').disabled=false;
+			}
+			else if(document.getElementById('noTranscript')){
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteOff');
+				$('#takeNote2').addClass('noteNope');
+				document.getElementById('takeNote2').disabled=true;
+			}
+			else{
+				document.getElementById('notesSection').style.display='none';
+				document.getElementById('noteEntry').style.display='none';
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteNope');
+				$('#takeNote2').addClass('noteOff');
+				document.getElementById('takeNote2').disabled=false;
+			}
+		}
+	}
+	else{
+		console.log("checking note status");
+		var shortName = myObjectID.substring(eCode.length);
+		if(SCORMcourse){
+			$('#takeNote2').removeClass('noteOn');
+			$('#takeNote2').removeClass('noteOff');
+			$('#takeNote2').addClass('noteNope');
+			document.getElementById('takeNote2').disabled=true;
+		}
+		else{
+		//if a note exists, show it
+			if (eCourseX.mynotes.indexOf(shortName)>-1){
+				if(document.getElementById('noTranscript')){
+					document.getElementById('notesSection').style.display="none";
+					document.getElementById('noteEntry').style.display='none';
+					$('#takeNote2').removeClass('noteOn');
+					$('#takeNote2').removeClass('noteOff');
+					$('#takeNote2').addClass('noteNope');
+					document.getElementById('takeNote2').disabled=true;
+				}
+				else{
+					document.getElementById('notesSection').style.display='block';
+					if(makeNewNote){
+						document.getElementById('noteEntry').style.display='block';
+						document.getElementById('userNote').focus();
+						document.getElementById('userNote').scrollIntoView(true);
+					}
+					else {
+						document.getElementById('noteEntry').style.display='none';
+					}
+
+					$('#takeNote2').removeClass('noteOff');
+					$('#takeNote2').removeClass('noteNope');
+					$('#takeNote2').addClass('noteOn');
+					document.getElementById('takeNote2').disabled=false;
+				}
+			}
+			else if(makeNewNote){
+				document.getElementById('notesSection').style.display='none';
+				document.getElementById('noteEntry').style.display='block';
+				document.getElementById('userNote').focus();
+				document.getElementById('userNote').scrollIntoView(true);
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteNope');
+				$('#takeNote2').addClass('noteOff');
+				document.getElementById('takeNote2').disabled=false;
+			}
+			else if(document.getElementById('noTranscript')){
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteOff');
+				$('#takeNote2').addClass('noteNope');
+				document.getElementById('takeNote2').disabled=true;
+			}
+			else{
+				document.getElementById('notesSection').style.display='none';
+				document.getElementById('noteEntry').style.display='none';
+				$('#takeNote2').removeClass('noteOn');
+				$('#takeNote2').removeClass('noteNope');
+				$('#takeNote2').addClass('noteOff');
+				document.getElementById('takeNote2').disabled=false;
+			}
+		}
+	}
+}
+
+//makeNote function opens the popup html page with the 
+//textarea opened from which to submit or edit a note
+
+function makeNote(){
+	//console.log("in make note");
+	//makeNewNote=true;
+	if(window.location.href.indexOf("transcript")>-1 || window.location.href.indexOf("printversion")>-1){
+		if(window.opener.eCourseX.mynotes.includes(shortmov)) editNote();
+		else { showNoteBox();
+		}
+		//window.opener.makeNewNote = true;
+	}
+	
+	else {
+		var shortmov = myObjectID.substring(eCode.length);
+		if(eCourseX.textonly == "ON" || myType.indexOf("html")>-1){
+			//if there is no current note for this page open the textarea
+			//otherwise, trigger edit note
+			if(eCourseX.mynotes.includes(shortmov)) editNote();
+			else { showNoteBox();
+				//document.getElementById('notesSection').style.display='block';
+				//document.getElementById('myNote').style.display='none';
+				//document.getElementById('noteEntry').style.display='block';
+			}
+			
+	
+		}
+		else if(myType == 'vid'){
+			if(transWindow && !transWindow.closed){
+				transWindow.showNoteBox();
+				transWindow.focus();
+			} 
+			else {
+				openTranscript("note");
+			} 
+		}
+		/*else if(myType == 'html1'){
+			if(newWindow && !newWindow.closed) setTimeout(function(){newWindow.focus();},100);
+			else openPrintVersion(myMovieTitle);
+		}
+		else if(myType == 'html2'){
+			if(newWindow && !newWindow.closed) setTimeout(function(){newWindow.focus();},100);
+			else openPrintVersion2(myMovieTitle);
+		}
+		else if(myType == 'html3'){
+			if(newWindow && !newWindow.closed) setTimeout(function(){newWindow.focus();},100);
+			else openPrintVersionEmbed(myMovieTitle);
+		}*/
+		//makeNewNote=true;
+	}
+	
+}
+
+
+
+function checkMyNoteState(){
+	return makeNewNote;
+}
+
+function cancelNote(){
+	makeNewNote = false;
+	if(window.location.href.indexOf("rc_common")>-1){
+		$("input:text").val("");
+		$('#noteEntry').css('display','none');
+		window.opener.makeNewNote = false;
+	}
+	else{
+		$("input:text").val("");
+		$('#noteEntry').css('display','none');
+		if(transWindow && !transWindow.closed){
+			$("input:text", transWindow.document).val("");
+			$('#noteEntry',transWindow.document).css('display','none');
+		} 
+	
+	}
+}
+
+var editFlag=false;
+function editNote(){
+	editFlag=true;
+	
+	$("textarea").val(myExistingNote.replace(/<br\s*[\/]?>/gi, "\n"));
+	 
+	document.getElementById('noteEntry').style.display='block';
+	document.getElementById('userNote').focus();
+}
+
+function showNoteBox(){
+	//("trying to show note box");
+	//check if note box is already open if you're in the transcript window
+	if(window.location.href.indexOf("transcript")>0 || window.location.href.indexOf("printversion")>-1){
+		if(document.getElementById('myNote').style.display=='block'){
+			editNote();
+		}
+		else{
+			document.getElementById('notesSection').style.display='block';
+	
+			document.getElementById('noteEntry').style.display='block';
+			document.getElementById('myNote').style.display='none';
+			document.getElementById('userNote').focus();	
+		}
+	}
+	else{
+		document.getElementById('notesSection').style.display='block';
+	
+		document.getElementById('noteEntry').style.display='block';
+		document.getElementById('myNote').style.display='none';
+		document.getElementById('userNote').focus();
+	}
+	//otherwise just 
+	
+}
+
+function deleteNote(){
+	if(window.location.href.indexOf("transcript")>0 || window.location.href.indexOf("printversion")>0){
+		var myNotePageIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode + "/" + window.opener.myLessonX + "/" + window.opener.myObjectID;
+		var shortName = window.opener.myObjectID.substring(window.opener.eCode.length);
+        ajaxstring=myNotePageIRI+'&*'+window.opener.actor2.account.name+'/'+fakeid+'()';
+		$.ajax({
+			type:"POST",
+			url: xAPIsetURL,
+			xhrFields: { withCredentials:true},
+			data:{
+				//"actorAccount":window.opener.actor2.account.homePage,
+			//	"actorName": window.opener.actor2.account.name,
+			//	"activityPath":  myNotePageIRI,
+            'mydata':ajaxstring
+			//	"progressContent": ""
+			},
+			success: function(){
+				console.log("note deleted. " );
+					
+				if(window.opener.eCourseX.mynotes.indexOf(shortName)>-1){
+					var whichNote = window.opener.eCourseX.mynotes.indexOf(shortName);
+					window.opener.eCourseX.mynotes.splice(whichNote,1);
+				}
+											
+				window.opener.setLRSdata();
+					
+				document.getElementById('myNote').style.display='none';
+				document.getElementById('noteEntry').style.display='none';
+				window.opener.makeNewNote=false;
+				window.opener.unsetNoteIcon();
+				window.location.reload();
+			},
+			error: function(){
+				console.log("an error has occurred. note was not deleted.");
+			}
+		});
+	}
+	else{
+		var myNotePageIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode + "/" + myLessonX + "/" + myObjectID;
+		var shortName = myObjectID.substring(eCode.length);
+        ajaxstring=myNotePageIRI+'&*'+window.opener.actor2.account.name+'/'+fakeid+'()';
+		$.ajax({
+			type:"POST",
+			url: xAPIsetURL,
+			xhrFields: { withCredentials:true},
+			data:{
+				//"actorAccount":actor2.account.homePage,
+				//"actorName": actor2.account.name,
+				//"activityPath":  myNotePageIRI,
+                'mydata':ajaxstring
+				//"progressContent": ""
+			},
+			success: function(){
+				console.log("note deleted. " );
+
+				if(eCourseX.mynotes.indexOf(shortName)>-1){
+					var whichNote = eCourseX.mynotes.indexOf(shortName);
+					eCourseX.mynotes.splice(whichNote,1);
+				}		
+
+				setLRSdata();
+
+				document.getElementById('myNote').style.display='none';
+				document.getElementById('noteEntry').style.display='none';
+				makeNewNote=false;
+				unsetNoteIcon();
+				//reload();
+			},
+			error: function(){
+				console.log("an error has occurred. note was not deleted.");
+			}
+		});
+	}
+	
+}
+
+var myExistingNote="";
+function showNote(mytext){
+	
+	myExistingNote = mytext.replace(/\n/g, "<br />");
+	
+	$('#actualNote').html("<p>" + myExistingNote  + "</p>");
+	
+		document.getElementById('notesSection').style.display='block';
+		document.getElementById('myNote').style.display='block';
+		document.getElementById('noteEntry').style.display='none';
+
+}
+
+function  stripHTML(text){
+   	var regex = /(<([^>]+)>)/ig;
+   	return text.replace(regex, "");
+}
+
+function sendNote(){
+	if(window.location.href.indexOf("transcript")>0 || window.location.href.indexOf("printversion")>0){
+		var shortName = window.opener.myObjectID.substring(window.opener.eCode.length);
+		
+		if(SCORMcourse){
+			alert(notedisabled);
+		}
+		else{
+			
+			var myNote = $('#userNote').val();
+			//myNote = stripHTML(myNote);
+
+			//myNote = DOMPurify.sanitize(myNote);
+			myNote = stripHTML(myNote);
+			var myNotePageIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode + "/" + window.opener.myLessonX + "/" + window.opener.myObjectID;
+			if(editFlag){
+				var wholeNote = myNote;
+			}
+			else {
+				var wholeNote = myExistingNote + '<br>' +  myNote;
+			}
+			var alreadyThere=false;
+			sendXAPIstatement(xannotated,window.location.href  + "/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+window.opener.myLessonX + "/" + window.opener.myObjectID);
+            ajaxstring=myNotePageIRI+'&*'+window.opener.actor2.account.name+'/'+window.opener.fakeid+'('+wholeNote+')';
+	
+			$.ajax({
+				type:"POST",
+				url: xAPIsetURL,
+				xhrFields: { withCredentials:true},
+				data:{
+					//"actorAccount":window.opener.actor2.account.homePage,
+					//"actorName": window.opener.actor2.account.name,
+					//"activityPath":  myNotePageIRI,
+                    'mydata':ajaxstring
+				//	"progressContent": wholeNote
+				},
+				success: function(){
+					if(window.opener.eCourseX.mynotes.indexOf(shortName)>-1){
+						alreadyThere = true;
+						console.log("not writing to mynotes");
+					}
+											
+					else{
+						window.opener.eCourseX.mynotes.push(shortName);
+						window.opener.setNoteIcon();
+					}
+					window.opener.setLRSdata();
+					window.opener.makeNewNote=false;
+					window.location.reload();
+					$("textarea").val('');
+				},
+				error: function(){
+					console.log("an error has occurred. note was not saved.");
+					alert(noteerror);
+					window.location.reload();
+				}
+			});
+			window.opener.makeNewNote=false;
+			editFlag = false;
+		}
+	}
+	else{
+
+		var shortName = myObjectID.substring(eCode.length);
+		if(SCORMcourse){
+			alert(notedisabled);
+		}
+		else{
+			var myNote = $('#userNote').val();
+			//myNote = DOMPurify.sanitize(myNote);
+			myNote = stripHTML(myNote);
+			var myNotePageIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode + "/" + myLessonX + "/" + myObjectID;
+			if(editFlag){
+				var wholeNote = myNote;
+			}
+			else {
+				var wholeNote = myExistingNote + '<br>' +  myNote;
+			}
+			var alreadyThere=false;
+			sendXAPIstatement(xannotated,window.location.href  + "/"+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum+  "/"+myLessonX + "/" + myObjectID);
+		ajaxstring=myNotePageIRI+'&*'+actor2.account.name+'/'+fakeid+'('+wholeNote+')';
+			$.ajax({
+				type:"POST",
+				url: xAPIsetURL,
+				xhrFields: { withCredentials:true},
+				data:{
+				//	"actorAccount":actor2.account.homePage,
+				//	"actorName": actor2.account.name,
+				//	"activityPath":  myNotePageIRI,
+                'mydata':ajaxstring
+					//"progressContent": wholeNote
+				},
+				success: function(){
+					if(eCourseX.mynotes.indexOf(shortName)>-1){
+						alreadyThere = true;
+						console.log("not writing to mynotes");
+					}
+											
+					else{
+						eCourseX.mynotes.push(shortName);
+						setNoteIcon();
+					}
+					setLRSdata();
+					makeNewNote=false;
+					showNote(wholeNote);
+					$("textarea").val('');
+				},
+				error: function(){
+					console.log("an error has occurred. note was not saved.");
+					alert(noteerror);
+					//window.location.reload();
+				}
+			});
+			makeNewNote=false;
+			editFlag = false;
+		}
+	}
+}
+
+var detailshow = 1;
+function hidedetail(){
+	//console.log("in function and detailshow is " + detailshow);
+	if(detailshow == 1 || typeof detailshow=="undefined"){
+		$('.noteach').hide();
+		detailshow = 0;
+		$('#swapdetail').html("Show Details");
+
+		$('.swapdetail').html("Show Details");
+	}
+	else{
+		$('.noteach').show();
+		detailshow = 1;
+		$('#swapdetail').html("Hide Details");
+		$('.swapdetail').html("Hide Details");
+	}
+}
+
+
+
+//need to change this to read eCourseX.myfontsize
+
+function setFontSize(whichway){
+	
+	//increasing
+	console.log("increasing");
+	if(eCourseX.myfontsize == "100" && whichway == "bigger") {
+		document.body.style.fontSize = "125%";
+		
+		$(".faveDiv").css("padding-top",".2em");
+		$("#panel1").css("margin-top","28px") 
+		eCourseX.myfontsize = "125";
+	}
+	else if(eCourseX.myfontsize == "125" && whichway == "bigger"){
+		document.body.style.fontSize = "150%";
+		
+	    $(".faveDiv").css("padding-top",".4em");
+		$("#printVersion").css("padding-top","6px");
+		$("#help").css("margin-top","4px");
+		$("#panel1").css("margin-top","33px");
+		$(".panel").css("height","91%");
+	//	$(".popout").css("background-size",".8em");
+		eCourseX.myfontsize = "150";
+	} 
+	//decreasing
+	else if(eCourseX.myfontsize == "150" && whichway == "smaller") {
+		document.body.style.fontSize = "125%";
+		
+		$(".faveDiv").css("padding-top",".2em");
+		$("#panel1").css("margin-top","28px");
+	//	$(".popout").attr("style","");
+		eCourseX.myfontsize = "125";
+	}
+	else if(eCourseX.myfontsize == "125" && whichway == "smaller"){
+		document.body.style.fontSize = "100%";
+		
+	  	$(".faveDiv").attr("style","");
+		$("#printVersion").attr("style","");
+		$("#help").attr("style","");
+		$("#panel1").attr("style","");	
+		$(".panel").attr("style","");
+		eCourseX.myfontsize = "100";
+	} 
+	setLRSdata();
+}
+
+
+function toggleAns(mytogid){
+	console.log(mytogid);
+  	var tbtn =(mytogid).substr(12); 
+	console.log("tbtn is " + tbtn);
+	var mytogans = "q" + tbtn + "a";
+	if ($("#"+mytogans).is(':visible')) {	 
+		$("#"+mytogid).val(sabtn) 
+		$("#"+mytogid).attr('aria-label','Show Answer');
+		
+		$("#"+mytogans).hide();	
+	} else {	
+		$("#"+mytogid).val(habtn); 	
+		$("#"+mytogid).attr('aria-label','Hide Answer');
+		
+		$("#"+mytogans).show();	
+	}    
+	 
+}
+function toggleAllAns(which){
+	
+	var allAns = document.getElementsByClassName('answer');
+	var allQbutns = document.getElementsByClassName('togg');
+
+	if(which == "show"){
+		for(i=0;i<allAns.length;i++){
+			$("#"+allAns[i].id).show();
+		}
+		for(j=0;j<allQbutns.length;j++){
+			$("#"+allQbutns[j].id).val(habtn) 
+			$("#"+allQbutns[j].id).attr('aria-label','Hide Answer');
+		}
+		document.getElementById('bigToggbtn').innerText = "Hide All Answers and Solutions";
+		$('#bigToggbtn').attr('onclick','toggleAllAns("hide");');
+		showSolutionInSteps(which);
+		showSolutionOnPage(which);
+	}
+	else{
+		for(i=0;i<allAns.length;i++){
+			$("#"+allAns[i].id).hide();
+		}
+		for(j=0;j<allQbutns.length;j++){
+			$("#"+allQbutns[j].id).val(sabtn) 
+			$("#"+allQbutns[j].id).attr('aria-label','Show Answer');
+		}
+		document.getElementById('bigToggbtn').innerText = "Show All Answers and Solutions";
+		$('#bigToggbtn').attr('onclick','toggleAllAns("show");');
+		showSolutionInSteps(which);
+		showSolutionOnPage(which);
+	}
+}
+
+function goDark(){
+	var lightOrDark = eCourseX.mymode;
+	
+	//console.log(lightOrDark);
+	if(lightOrDark == "light"){
+		document.getElementById("maincss").href="dlc_dark.css";
+		lightOrDark = "dark";
+		document.getElementById("accDark").innerText = dkbtnoff;
+		$("<span aria-hidden='true'> (Alt+Z)</span>").appendTo($('#accDark'));
+		eCourseX.mymode = "dark";
+	}
+	else if(lightOrDark == "dark"){
+		document.getElementById("maincss").href="dlc.css";
+		lightOrDark = "light";
+		document.getElementById("accDark").innerText = dkbtn;
+		$("<span aria-hidden='true'> (Alt+Z)</span>").appendTo($('#accDark'));
+		eCourseX.mymode = "light";
+	}
+	setLRSdata();
+	sendXAPIstatement(xinteracted, window.location.href+'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum  + '/setMode/'+ lightOrDark);
+	setTimeout(function(){window.scrollTo(0,0);console.log("scrolling");},2000);
+}
+
+function openAccessTips(){
+	var myurlbase = window.location.href.substring(0,window.location.href.lastIndexOf("/"));
+	myTipsURL = myurlbase + '/rc_common/accessTips_' + myLangCode +  '.htm'
+	if(myLangCode == "en"){
+		openOther('rc_common/accessTips.htm');
+	}
+	else{
+		$.ajax({
+			url: myTipsURL ,
+			error: function(){
+				console.log("ajax problems");
+				openOther('rc_common/accessTips.htm');
+			},
+			success: function(){
+				openOther('rc_common/accessTips_' + myLangCode +  '.htm');
+			}
+     	});  
+	}
+}
+
+/*!
+ ******************************
+ * landmark stuff
+ ******************************/
+
+function hidePopUpDivs() {
+	$('.landmarkDiv').hide();
+}
+
+
+function openLandmarks(){
+	$('.landmarkDiv').show();
+		$('#landmarkDivFirstItem').focus();
+		$(document).keyup(escToExitLandmark);
+		$(document).keyup(tabToJailLandmark);
+		$(document).keydown(detectLastItem);
+}
+
+
+
+/*
+ * showFancyPopUp(x:Object,z:Object,x:Number,y:Number,d:String)
+ *
+ * displays fancy popups
+ *
+ * x = object's position
+ * z = object's offset
+ * w = object's width
+ * y = object's height
+ * d = the id/class of the hidden div
+ */
+function showFancyPopUp(t, d) {
+	hidePopUpDivs();
+	$('.' + d).toggle();
+	$("#" + d).css('bottom', 65);
+	$("#fancyDivArrow").css('bottom', 60);
+	$("#" + d).css('right', (t - ($("#" + d).width() / 2)));
+	$("#fancyDivArrow").css('right', (t - ($("#fancyDivArrow").width() / 2)));
+	$(document).keyup(escToExitFancyPopups);
+	$('#' + d + 'FirstItem').focus();
+	$(document).keydown(detectLastItem);
+	$(document).keyup(tabToJailFancyPopups);
+}
+
+
+var isCtrl = false;
+$(document).on('keyup', function (e) {
+	if (e.which == 17)
+		isCtrl = false;
+}).keydown(function (e) {
+	if (e.which == 17)
+		isCtrl = true;
+	if (e.which == 117 && isCtrl == true) {
+		e.preventDefault();
+		$('.landmarkDiv').show();
+		$('#landmarkDivFirstItem').focus();
+		$(document).keyup(escToExitLandmark);
+		$(document).keyup(tabToJailLandmark);
+		$(document).keydown(detectLastItem);
+		isCtrl = false;
+		return false;
+	}
+});
+
+function escToExitLandmark(e) {
+	if (e.keyCode == 27) {
+		$('.landmarkDiv').hide();
+		$(document).unbind("keyup", escToExitLandmark);
+		$(document).unbind("keyup", tabToJailLandmark);
+		$(document).unbind("keydown", detectLastItem);
+		lastItem = '';
+	}
+}
+
+function tabToJailLandmark(e) {
+	if (e.keyCode == 9) {
+		//console.log('goToLast:'+goToLast+' goToFirst:'+goToFirst+' e.target.id:'+e.target.id+' lastItem:'+lastItem+$(document.activeElement).id);
+		if (goToDelete) {
+			$('#landmarkDeleteButton').focus();
+			goToDelete = false;
+		} 
+		else if (goToLast) {
+			$('#landmarkDivLastItem').focus();
+			goToLast = false;
+		} 
+		else if (goToFirst) {
+			$('#landmarkDivFirstItem').focus();
+			goToFirst = false;
+		} 
+		else if ((e.target.id == "landmarkDeleteButton") && (lastItem == 'landmarkDivFirstItem')) {
+			$('#landmarkDeleteButton').focus();
+			goToLast = true;
+			//console.log('goToLast'+goToLast);
+		} 
+		else if ((lastItem == 'landmarkDeleteButton') && (e.target.id != 'landmarkDivFirstItem')) {
+			$('#landmarkDivLastItem').focus();
+		} 
+		else {
+			if ((lastItem == 'landmarkDivLastItem') && (e.target.id != 'landmarkDiv2')) {
+				$('#landmarkDeleteButton').focus();
+				//goToFirst = true;
+			}
+		}
+	}
+}
+
+function detectLastItem(e) {
+	lastItem = e.target.id;
+	//console.log(e.target.id);
+}
+
+function landmarkToContents(){
+    $('#tab1').click();	
+	$('#panel1').focus();
+	$('.playing button').focus();
+}
+
+function landmarkToSearch(){
+    $('#tab3').click();	
+	$('#searchtext2').focus();
+}
+
+ /************************************************************************************************
+ * jQuery events
+ ***********************************************************************************************/
+$(document).on('click', "#tabs li[role='tab']", function(){
+	$("li[role='tab']").attr("aria-selected","false"); //deselect all the tabs 
+ 	$(this).attr("aria-selected","true");  // select this tab
+	var tabpanid= $(this).attr("aria-controls"); //find out what tab panel this tab controls  
+    var tabpan = $("#"+tabpanid);  
+	$("div[role='tabpanel']").attr("aria-hidden","true"); //hide all the panels 
+	tabpan.attr("aria-hidden","false"); 
+	if (tabpan[0].id == "panel1") tabpan.scrollTop(scroll_position1); //if panel1 is scrolled down, keep the position
+	else tabpan.scrollTop(scroll_position2); 
+ });
+
+$(document).on('keydown', "li[role='tab']", function(ev){
+ 	if ((ev.which ==13)||(ev.which ==32)) {
+		ev.preventDefault();
+ 		$(this).click()
+ 	}
+ });
+
+//This adds keyboard function that pressing an arrow left or arrow right from the tabs toggle the tabs. 
+ $(document).on('keydown',"li[role='tab']", function(ev){
+	if ((ev.which ==39)||(ev.which ==37)) { 
+	 	var selected= $(this).attr("aria-selected"); 
+  		if (selected =="true"){ 
+    		$("li[aria-selected='false']").attr("aria-selected","true").focus() ; 
+    		$(this).attr("aria-selected","false"); 
+    		var tabpanid= $("li[aria-selected='true']").attr("aria-controls"); 
+    		var tabpan = $("#"+tabpanid); 
+    		$("div[role='tabpanel']").attr("aria-hidden","true"); 
+    		tabpan.attr("aria-hidden","false");
+   		}
+ 	}
+});
+
+
+ //keyboard combo to trigger debug window - 68 is "d" - ALT+CTRL+d
+$(document).on('keydown',function(ev){
+	if (ev.which === 68 && ev.altKey && ev.ctrlKey) {
+		   openOther('debugDLC.htm');
+		}
+ });
+// with contentContainer active, equal sign displays movie name in alert window
+$(document).on('keydown',"#contentContainer",function(ev){
+   if (ev.which === 187) {
+      	alert(myObjectID);
+   	}
+});
+
+// hide|show answer toggle button
+$(document).on('click', ".togg", function() {  
+  	var id =(this.parentNode.id)+"a";
+  	var tbtn =(this.id); 
+	$("#"+id).toggle('0', function(){	 
+		if ($("#"+id).is(':visible')) {	 
+			$("#"+tbtn).val(habtn); 	
+			$("#"+tbtn).attr('aria-label','Hide Answer');
+			$("#"+id).focus();
+		} else {		
+			$("#"+tbtn).val(sabtn) 
+			$("#"+tbtn).attr('aria-label','Show Answer');
+		}    
+	}); 
+});
+// hide|show solution toggle button
+$(document).on('click', ".toggSoln", function() {  
+	var id =(this.parentNode.id)+"a";
+	var tbtn =(this.id); 
+	  $("#"+id).toggle('0', function(){	 
+		  if ($("#"+id).is(':visible')) {	 
+			  $("#"+tbtn).val(hsbtn); 	
+			  $("#"+tbtn).attr('aria-label','Hide Solution');
+			  $("#"+id).focus();
+		  } else {		
+			  $("#"+tbtn).val(ssbtn) 
+			  $("#"+tbtn).attr('aria-label','Show Solution');
+		  }    
+	  }); 
+  });	 
+
+//hide|show button: Label of button based on string after "show" in the button code (value=)
+$(document).on('click', '#hideshowbutt', function() {  
+    $("#hideshowcontent").toggle('0', function(){	
+	  	if ($("#hideshowcontent").is(':visible')) {	 
+			$("#hideshowbutt").val(hcbtn); 	
+			$("#hideshowbutt").attr('aria-label',hcbtn);
+			$("#hideshowcontent").focus();
+		} 
+		else {		
+			$("#hideshowbutt").val(scbtn) 
+			$("#hideshowbutt").attr('aria-label',scbtn);
+		}  
+	});
+});
+
+// hide|show steps toggle button
+
+$(document).on('click', ".toggSteps",function() {  
+  	var id =(this.parentNode.id)+"a";
+  	var tbtn =(this.id); 
+	$("#"+id).toggle('0', function(){	 
+		if ($("#"+id).is(':visible')) {	 
+			$("#"+tbtn).val('Hide Steps') 	
+		} 
+		else {		
+			$("#"+tbtn).val('Show Steps') 	  
+		}    
+	}); 
+});
+
+
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+});
+
+/////SEARCH FUNCTIONS/////
+/*!
+ * doSearch()
+ *
+ * search the htm file and return results.
+ */
+function doSearch() {
+ 	//$('input#searchtext2').blur();
+
+	var searchtext = $('#searchtext2').val();
+	/*if(typeof xtraselect != "undefined" && xtraselect != "none"){
+		var isChecked = document.getElementById('includeSelecty');
+		if(isChecked.checked) var includeSelect = 'yes';	
+		else var includeSelect = 'no';}
+	else*/ var includeSelect = "no";
+	if(searchtext.indexOf('<') !=-1 && searchtext.indexOf('>') != -1) {
+		searchtext=searchtext.replace("<", "");
+		searchtext=searchtext.replace(">", "");
+	}
+	
+	var filenamesearch = false;
+	if ((searchtext == '') || (searchtext == ' ') || (searchtext == '  ')) return;
+	if(searchtext == 'DEBUG!'){
+		openOther('debugDLC.htm');
+		return;
+	}
+	else if(searchtext == 'TRACKME'){
+		openOther('trackDLC.htm');
+		return;
+	}
+	else if(searchtext == 'survey'){
+		openOther('survey.htm');
+		return;
+	}
+	/*else if(searchtext == 'translation'){
+		openOther('transurvey.htm');
+		return;
+	}*/
+	else if(searchtext.indexOf(""))
+	if(searchtext == 'DEBUG!') return;
+	/*if(searchtext == 'movieplay'){
+		openOther('movieTroubleshoot.htm');
+		return;
+	}*/
+	var lcsearchtext = searchtext.toLowerCase();
+	$.each(gMovieArray, function(i, v){
+		//console.log(v[0]);
+		if(searchtext == v[0]){
+			//if (!onMainLevel) $(".lessonBackButton").hide();
+			var nameHolder = searchtext.substring(searchtext.indexOf("_")-2,searchtext.indexOf("_"));
+		//	console.log("nameHolder is " + nameHolder + " and mySCO is " + mySCO + " and this is a test " + lessonTitles[parseInt(nameHolder)]);
+			if(SCORMcourse){
+				if(nameHolder != mySCO)	resultsHTML = "<strong>" + v[2] + "</strong>, in lesson: " + lessonTitles[parseInt(nameHolder)][1];
+				else{
+					resultsHTML = '<a class="searchLinks allLinks" alt"Click to load" href="Javascript:showMovieDivCheck(\'' + searchtext + '\');">';
+					resultsHTML += v[2];
+					resultsHTML += "</a>";
+				}
+			}
+			else{
+				resultsHTML = '<a class="searchLinks allLinks" alt="Click to load" href="Javascript:showMovieDivCheck(\'' + searchtext + '\');">';
+				resultsHTML += v[2];
+				resultsHTML += "</a>";
+			}
+		//		$('#searchResults').html('<ul id="searchResultsUL" class="searchResultsUL" tabindex="0" aria-labelledby="searchResultsResults">' + resultsHTML + '</ul>');
+			$('#searchResults').html( resultsHTML );
+			
+			filenamesearch = true;
+			$('#searchResults').fadeIn();
+			$('#searchResultsResults').focus();
+			var t = setTimeout(function () {
+				$('#delete').css('background-image', 'url("rc_common/close_icon.png")');
+				$('#delete').attr('title', searchclear);
+			}, 1000);
+			return;
+		}
+	});
+	sendXAPIstatement(xsearched,window.location.href+'/'+familycode+"/"+eCode+"/"+myLangCode+'/'+versNum  + '/'+ searchtext);
+	 
+	var matchCount = 0;
+	var resultsCount = 0;
+	var resultsHTML = '';
+	var lcsearchtext = searchtext.toLowerCase();
+	
+	if(!filenamesearch) {
+		var displayedLessonName,
+		lessonName = '';
+		/*if(SCORMcourse) var mysearchpath = '../search.htm?test=test .forsearch2';
+		else*/ var mysearchpath = 'search.htm?test=test .forsearch2';
+		$('#searchResults').load(mysearchpath , function () {
+			$("#searchResults div.forsearch2").each(function (n) {
+				
+				$(this).hide();
+				var nameHolder = $(this).attr('id');
+				var classHolder = $(this).attr('class');
+				if(classHolder.indexOf("select")!=-1) var origEnd = nameHolder.substring(nameHolder.lastIndexOf("_"));
+				else var origEnd = "";
+				var lessNum = $(this).attr('id');
+				lessNum = lessNum.substring(lessNum.indexOf("_")-2,lessNum.indexOf("_"));
+				if (nameHolder) {
+					$(this).prepend('<br><hr>');
+					//console.log("searchtext is " + searchtext);
+					if ($(":Contains('" + searchtext + "')", this).length > 0) {
+						if(classHolder.indexOf("select")==-1 || (classHolder.indexOf("select") != -1 && (includeSelect == "yes" || origEnd == xtraselect) )){
+						
+							if (lessonName == getLessonName($(this).attr('id'))) {
+								displayedLessonName = '';
+							} 
+							else {
+								lessonName = getLessonName($(this).attr('id'));
+								displayedLessonName = lessonName.replace('tabindex="0"','');
+								
+							}
+							var origMov = "no"; 
+							var titlEnd = "";
+							if(classHolder.indexOf("select")!=-1){						   
+								for(a=0;a<selectoptions.length;a++){
+									if(origEnd == selectoptions[a][0]){
+										titlEnd = " " + selectoptions[a][1];
+									}
+								}
+								var mov = nameHolder.substring(0,nameHolder.lastIndexOf("_")) + "select";
+							}
+							else var mov = nameHolder;
+							//console.log("mov is "  + mov);
+							var numuscore = mov.match(/_/gi).length;
+							if(numuscore > 2 && (mov.indexOf("_l1")>-1 || mov.indexOf("_l2")>-1 || mov.indexOf("_l3")>-1 || mov.indexOf("_l4")>-1 || mov.indexOf("_l5")>-1)) {
+								origMov = lessNum + '/'+ mov + '.htm';
+								mov= mov.substring(0,mov.length-3);
+							}
+							//console.log("nameholder is " + nameHolder);
+							//console.log("origmov is " + origMov);
+							//console.log("mov is " + mov);
+							var titl = getMovieName(mov);
+							if(titl.indexOf('<img')==0)var titlDemo=titl.substring(0,titl.indexOf('>')+1);
+							else var titlDemo = '';
+							if(SCORMcourse)	var titlImg=titl.substring(titl.indexOf('<img src="../rc_common/'));
+							else var titlImg=titl.substring(titl.indexOf('<img src="rc_common/'));
+							//console.log("titlimg is " + titlImg);
+							var titlText = titl.substring(titlDemo.length,titl.length-titlImg.length) + titlEnd;
+
+							var syn = $(this).text();
+							syn = syn.substring(syn.indexOf('*')+1);
+							var syn2 = $(this).html();
+					    	var syn4 = syn2.toLowerCase();
+							if(SCORMcourse && lessNum != mySCO){
+								resultsHTML += '<li class="visible searchResults" tabindex="-1">' + displayedLessonName + '<ul class="searchResultsUL movieID body" id="KB' + n + 'Parent"><li class="searchNoLinks "><strong>' + titlDemo + titlText.replace(new RegExp(searchtext, 'gi'), '<b style="background-color:gold;">' + searchtext + '</b>')  + '</strong></li>';
+							}
+							else{
+								if(classHolder.indexOf("select") !=-1){
+									resultsHTML += '<li class="visible searchResults" tabindex="-1">' + displayedLessonName + '<ul class="searchResultsUL movieID body" id="KB' + n + 'Parent"><li><button class="searchLinks allLinks" alt="Click to load" onClick="Javascript:showMovieDiv(\'' + mov + '\',\'no\',\''+origEnd+'\');">' + titlDemo + titlText.replace(new RegExp(searchtext, 'gi'), '<b style="background-color:gold;">' + searchtext + '</b>') + titlImg+ '</button></li>';
+								}
+								else if(origMov == "no"){
+									resultsHTML += '<li class="visible searchResults" tabindex="-1">' + displayedLessonName + '<ul class="searchResultsUL movieID body" id="KB' + n + 'Parent"><li><button class="searchLinks allLinks" alt="Play Movie" onClick="Javascript:showMovieDiv(\'' + mov + '\');">' + titlDemo + titlText.replace(new RegExp(searchtext, 'gi'), '<b style="background-color:gold;">' + searchtext + '</b>') + titlImg+ '</button></li>';
+								} 
+								else {
+									resultsHTML += '<li class="visible searchResults" tabindex="-1">' + displayedLessonName + '<ul class="searchResultsUL movieID body" id="KB' + n + 'Parent"><li><button class="searchLinks allLinks" alt="Play Movie" onClick="Javascript:showMovieDiv(\'' + mov + '\'); openSearchPractice(\''+origMov+'\');">' + titlDemo + titlText.replace(new RegExp(searchtext, 'gi'), '<b style="background-color:gold;">' + searchtext + '</b>') + titlImg+ '</button></li>';
+								} 
+							}
+							if(getMovieType(mov)){	
+								var tagopen=false;
+								var searchfrom = 0;
+								var syn3 = "";
+								for(k=0;k<syn2.length;k++){
+									if(syn2.indexOf('<',searchfrom)==k){
+										tagopen=true;
+										searchfrom = k;
+										syn3 += syn2.charAt(k); 
+									}
+									else if(syn2.indexOf('>',searchfrom) == k){
+										tagopen = false;
+										searchfrom=k;
+										syn3 += syn2.charAt(k); 
+									}
+									else if(syn2.indexOf(searchtext,searchfrom)== k || syn4.indexOf(lcsearchtext, searchfrom) == k){
+										if(!tagopen){
+											syn3 += '<b style="background-color:gold;">' + searchtext + '</b>' ;
+											k=k+(searchtext.length-1)
+										}
+										else syn3 += syn2.charAt(k); 
+										searchfrom=k+(searchtext.length);
+									}
+									else syn3 += syn2.charAt(k); 
+								}
+								resultsHTML +='<li tabindex="-1" class="searchResultsLI"><a id="syn' + n + '" href="JavaScript: return false;" class="tlink" aria-label="Expand full text of video"  onClick="expandIt(\'KB' + n + '\');$(\'#syn' + n + '\').hide();return false">(Click to expand)<br>' + syn.substring(0, 80) + '...</a><br/><a id="KB' + n + 'Child" class="child tlink tlink2" tabindex="-1" href="JavaScript: return false;" onClick="expandIt(\'KB' + n + '\');$(\'#syn' + n + '\').show();return false">(Click to collapse)';
+								resultsHTML += syn3;
+								resultsHTML += '</a></li>';
+							}
+							resultsHTML+='</ul></li>';
+							$(this).show();
+							matchCount++;
+						}
+					}
+					resultsCount++;
+				}
+			});
+			
+			$('#searchResults').html('<ul id="searchResultsUL" class="searchResultsUL" tabindex="0" aria-labelledby="searchResultsResults">' + resultsHTML + '</ul>');
+			$('#searchResults math b').contents().unwrap();
+		
+			if (matchCount == 0) {
+				$('#searchResults').html('<h2 id="searchResultsResults" tabindex="0">' + searchno + '</h2>');
+			} else {  //full cours search with results
+				$('#searchResults').prepend('<h2  id="searchResultsResults" tabindex="0">' + matchCount + searchyesfull + '</h2><button id="delete" title="Clear search results"></button><br><hr>')
+			}
+			if (typeof xtraselect !="undefined" && xtraselect !="none")  $('#searchResults').prepend("<br><br>");
+		//	$('#delete').css('background-image', 'url("rc_common/loading.gif")');
+			$('#searchResults').fadeIn();
+			$('#searchResultsResults').focus();
+			var t = setTimeout(function () {
+					$('#delete').css('background-image', 'url("rc_common/close_icon.png")');
+				}, 1000);
+		});
+
+	return;
+	}
+	$('#searchResultsResults').focus();
+}
+
+$(document).on("click","#delete", function (e) {
+	closeSearch();
+});
+
+$(document).on("touchstart","#delete", function (e) {
+	e.preventDefault();
+	closeSearch();
+});
+
+
+function closeSearch() {
+	$("#searchtext2").val("");
+//	$('#searchResults').fadeOut();
+	$('#searchResults').html('');
+}
+
+/*!
+ * getMovieName(mov:String)
+ *
+ *
+ */
+function getMovieName(mov) {
+	//console.log("in getMoviename and mov is " + mov);
+	var match = false;
+	var plevel = "none";
+	var numuscore = mov.match(/_/gi).length;
+	if(numuscore > 2 && (mov.indexOf("_l1")>-1 || mov.indexOf("_l2")>-1 || mov.indexOf("_l3")>-1 || mov.indexOf("_l4")>-1 || mov.indexOf("_l5")>-1)) {
+		plevel = mov.substr(mov.length-1, 1);
+		mov = mov.substr(0,mov.length-3);
+		//console.log("plevel is " + plevel + " and mov is " + mov);
+	}
+	
+	$.each(gMovieArray, function (i, v) {
+		if (v[0] == mov){
+			if(v[1]=="vid")	{
+				match = v[2] + '<img src="rc_common/showmovie.png" alt="Load Video" border="0">';
+			}
+			else {
+				if(plevel != "none"){
+					match = v[2] + '<img src="rc_common/showpage.png" alt="Load Page" border="0"> Link '  + plevel; 
+				}
+				else {
+					match = v[2] + '<img src="rc_common/showpage.png" alt="Load Page" border="0">'; 
+				}
+			}
+		}
+	});
+	//console.log("in getMovieName and match is " + match);
+	return match;
+}
+
+
+function getMovieType(mov) {
+	var movieType = false;
+	$.each(gMovieArray, function (i, v) {
+		if (v[0] == mov){
+				if(v[1]=="vid")	movieType=true;	
+		}
+	});
+	return movieType;
+}
+
+/*!
+ * getMovieName(mov:String)
+ *
+ * "quick" way to get the movie name.
+ *
+ */
+function getLessonName(mov) {
+	var match = false;
+	var les = mov.split('_');
+	$.each(lessonTitles, function (i, v) {
+		if (v[0] == les[0])
+			match = '<h3 class="lessTitle" tabindex="0">' + v[1] + '</h3>';
+	});
+	return match;
+}
+
+function expandIt(el) { 
+    whichEl = document.getElementById(el + "Child"); 
+    if (whichEl.style.display != "block") {
+        whichEl.style.display = "block";
+    }
+    else {
+        whichEl.style.display = "none";
+    }  
+	
+}
+
+/* END SEARCH STUFF*/
+function openTSurvey(){
+	openOther('transurvey.htm');
+	$("#transdialog").dialog("close");
+}					   
+
+function openSurvey(whichsurvey){
+	if(whichsurvey=="en") openOther('survey.htm');
+	else if(whichsurvey=="trans") openOtherWide('transurvey.htm');
+}
+
+function runTestQuery(){
+	$.ajax({
+			type: "POST",
+			url:xAPIgetURL,	
+			xhrFields : {
+				withCredentials : true
+			},
+			data:{
+			
+				"verb":xinteracted.verb,
+				"verbDisplay": xinteracted.verbDisplay
+			},
+			success:function(data){
+				console.log("here it is "+ data);
+			},
+			error:function(){
+				console.log("no good.");
+			}
+	});
+}
+
+//not called from transcript popup window-- function is duplicated in that page's header
+function loadUserNoteMain(){
+
+	//console.log("trying to load user note");
+	var mypageIRI = window.location.href.substring(0,window.location.href.indexOf(".com/"))+ ".com/"+ eCode + "/" + myLessonX + "/" + myObjectID;
+	for(i=0;i<eCourseX.mynotes.length;i++){
+		var fullName = eCodeLC + eCourseX.mynotes[i];
+		ajaxstring=mypageIRI+'&*'+actor2.account.name+'/'+fakeid;
+		if(fullName == myObjectID){
+			
+			$.ajax({
+				type: "POST",
+				url:xAPIgetURL,	
+				xhrFields : {
+					withCredentials : true
+				},
+				data:{
+					//"actorAccount":actor2.account.homePage,
+//					"actorName":actor2.account.name,
+//					"activityPath": mypageIRI
+'mydata':ajaxstring
+				},
+				crossDomain : true,
+				success: function(data){
+					console.log("note data " + data);
+					myExistingNote = data.replace(/\n/g, "<br />");
+					
+					$('#actualNote').html("<p>" + myExistingNote + "</p>");
+					document.getElementById('notesSection').style.display='block';
+				},
+				error:function(){
+					console.log("problem getting note");
+				}
+			});
+			break;
+			
+		}
+	}	
+	
+	
+} 

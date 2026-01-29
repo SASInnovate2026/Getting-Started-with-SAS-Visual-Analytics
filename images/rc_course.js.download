@@ -1,0 +1,122 @@
+//////   COURSE INFO   /////////////////////////////////////////
+ 
+var eTitle = "SAS&#174; Viya Overview";// use &#174; for registered trademark, use &#8482; for "TM".
+var eCode = "EVYOV52"; //this must match the prefix you use in your movies but should be uppercase - (it can be lowercase in the movie filenames).
+//var hasVideo = true; //true if there are videos in the course, otherwise false
+var hasTextVersion = true; // true if your course has transcripts, otherwise false
+var hasSearchFile = true; // true if your course has search, otherwise false
+var hasCC = true; // true if your course does has CC, otherwise false
+var hasDemoPDF = false; //change to true if you are including a PDF version of the demo steps 
+var hasDemoHTML = false; //change to true if you are including an HTML popup of the demo steps
+var hasSimSteps = false; //change to true if you are including steps for a software simulation from launch page
+var hasAccVersion = true; // change to true if there is an accessible version
+var translateGUI = "no";
+var myLang = "English";
+var myLangCode = "en";
+ 
+////////////// LESSON TITLES //////////////
+ 
+var lessonTitles=new Array(); // do NOT include symbols in lesson titles
+ 
+lessonTitles[0] = new Array("evyov5200","Course Overview");
+lessonTitles[1] = new Array("evyov5201","Lesson 1: Introduction to the SAS Viya Platform");
+lessonTitles[2] = new Array("evyov5202","Lesson 2: SAS Viya Applications");
+lessonTitles[3] = new Array("evyov5203","Lesson 3: SAS Viya Programming Features");
+lessonTitles[4] = new Array("evyov5204","Lesson 4: Case Study - Diabetes Data");
+lessonTitles[5] = new Array("evyov5205","Lesson 5: Additional SAS Viya Applications and Features");
+ 
+////////////// SECTION TITLES //////////////
+ 
+var sectionArray00=new Array();
+sectionArray00[0]=new Array("evyov5200_0"," ");
+ 
+var sectionArray01=new Array();
+sectionArray01[0]=new Array("evyov5201_0"," ");
+ 
+var sectionArray02=new Array();
+sectionArray02[0]=new Array("evyov5202_1","2.1 Discover Information Assets with SAS Information Catalog");
+sectionArray02[1]=new Array("evyov5202_2","2.2 Manage Data with SAS Data Explorer");
+sectionArray02[2]=new Array("evyov5202_3","2.3 Explore and Visualize with SAS Visual Analytics");
+sectionArray02[3]=new Array("evyov5202_4","2.4 Develop Code and Flows with SAS Studio");
+sectionArray02[4]=new Array("evyov5202_5","2.5 Build Models with SAS Model Studio");
+sectionArray02[5]=new Array("evyov5202_6","2.6 Share SAS Content with SAS for Microsoft 365");
+ 
+var sectionArray03=new Array();
+sectionArray03[0]=new Array("evyov5203_0","Lesson Overview");
+sectionArray03[1]=new Array("evyov5203_1","3.1 Accelerate Code with SAS Cloud Analytics Services (CAS)");
+sectionArray03[2]=new Array("evyov5203_2","3.2 SAS Viya and Open Source Integration ");
+ 
+var sectionArray04=new Array();
+sectionArray04[0]=new Array("evyov5204_0"," ");
+ 
+var sectionArray05=new Array();
+sectionArray05[0]=new Array("evyov5205_1","5.1 Additional SAS Studio Features");
+sectionArray05[1]=new Array("evyov5205_2","5.2 Manage Environment with SAS Environment Manager");
+sectionArray05[2]=new Array("evyov5205_3","5.3 Manage Models with SAS Model Manager");
+sectionArray05[3]=new Array("evyov5205_4","5.4 Build Decisions with SAS Intelligent Decisioning");
+sectionArray05[4]=new Array("evyov5205_5","5.5 Streaming Analytics with SAS Event Stream Processing");
+sectionArray05[5]=new Array("evyov5205_6","5.6 SAS Viya Workbench for Developers");
+ 
+////////////// LESSON TOPICS ///////////////////////////////////////////////////////////////
+ 
+var movieArray00=new Array();
+movieArray00[0]= new Array("evyov5200_0_a","vid","Welcome to the Course","1:19"," ","6386042483112");
+movieArray00[1]= new Array("evyov5200_0_b","html","Practicing in This Course",""," ","");
+movieArray00[2]= new Array("evyov5200_0_c","html","Setting Up Your Practice Files (REQUIRED)",""," ","");
+movieArray00[3]= new Array("evyov5200_0_d","html","What's New in This Course",""," ","");
+ 
+var movieArray01=new Array();
+movieArray01[0]= new Array("evyov5201_0_a","vid","SAS Viya and the Data and AI Life Cycle","2:22"," ","6386042779112");
+movieArray01[1]= new Array("evyov5201_0_b","vid","SAS Viya Core Qualities","4:14"," ","6386042981112");
+movieArray01[2]= new Array("evyov5201_0_c","vid","SAS Viya Platform Architecture","1:57"," ","6386041402112");
+movieArray01[3]= new Array("evyov5201_0_d","vid","Business Scenario","1:14"," ","6386042682112");
+ 
+var movieArray02=new Array();
+movieArray02[0]= new Array("evyov5202_0_a","vid","Lesson Overview","2:10"," ","6386041533112");
+movieArray02[1]= new Array("evyov5202_1_a","vid","What Is SAS Information Catalog?","0:41"," ","6386042780112");
+movieArray02[2]= new Array("evyov5202_1_bdemo","vid","Demo: Discover Information Assets with SAS Information Catalog","14:39"," ","6386043464112");
+movieArray02[3]= new Array("evyov5202_2_a","vid","What Is SAS Data Explorer?","2:56"," ","6386043173112");
+movieArray02[4]= new Array("evyov5202_2_bdemo","vid","Demo: Manage Data with SAS Data Explorer","8:30"," ","6386041403112");
+movieArray02[5]= new Array("evyov5202_3_a","vid","What Is SAS Visual Analytics?","0:34"," ","6386042681112");
+movieArray02[6]= new Array("evyov5202_3_bdemo","vid","Demo: Explore and Visualize with SAS Visual Analytics","14:08"," ","6386042778112");
+movieArray02[7]= new Array("evyov5202_4_a","vid","What Is SAS Studio?","1:39"," ","6386043193112");
+movieArray02[8]= new Array("evyov5202_4_bdemo","vid","Demo: Develop Code with SAS Studio","9:48"," ","6386041929112");
+movieArray02[9]= new Array("evyov5202_4_cdemo","vid","Demo: Build Flows with SAS Studio","11:56"," ","6386041928112");
+movieArray02[10]= new Array("evyov5202_5_a","vid","What Is SAS Model Studio?","1:13"," ","6386043874112");
+movieArray02[11]= new Array("evyov5202_5_bdemo","vid","Demo: Build Models with SAS Model Studio","8:14"," ","6386043481112");
+movieArray02[12]= new Array("evyov5202_6_a","vid","What Is SAS for Microsoft 365?","0:44"," ","6386042594112");
+movieArray02[13]= new Array("evyov5202_6_bdemo","vid","Demo: Share SAS Content with SAS for Microsoft 365","14:11"," ","6386043873112");
+ 
+var movieArray03=new Array();
+movieArray03[0]= new Array("evyov5203_0_a","vid","Lesson Overview","0:41"," ","6386044064112");
+movieArray03[1]= new Array("evyov5203_1_a","vid","How Can I Leverage the Power of CAS in My Code?","3:31"," ","6386041314112");
+movieArray03[2]= new Array("evyov5203_1_b","vid","Accessing Data Through Caslibs (Review)","2:40"," ","6386043579112");
+movieArray03[3]= new Array("evyov5203_1_cdemo","vid","Demo: Accelerate Code with CAS","11:52"," ","6386043383112");
+movieArray03[4]= new Array("evyov5203_2_a","vid","How Can I Use Open Sources Languages with SAS Viya?","2:58"," ","6386043445112");
+movieArray03[5]= new Array("evyov5203_2_bdemo","vid","Demo: Use Python Code in SAS Studio","7:44"," ","6386043444112");
+movieArray03[6]= new Array("evyov5203_2_cdemo","vid","Demo: Use the Python SWAT Package (Optional)","18:23"," ","6386044320112");
+ 
+var movieArray04=new Array();
+movieArray04[0]= new Array("evyov5204_0_a","html","Diabetes Case Study Overview",""," ","");
+movieArray04[1]= new Array("evyov5204_0_b","html","Step 1: Manage Data with SAS Data Explorer",""," ","");
+movieArray04[2]= new Array("evyov5204_0_c","html","Step 2: Discover Information Assets with SAS Information Catalog",""," ","");
+movieArray04[3]= new Array("evyov5204_0_d","html","Step 3: Develop Code and Flows with SAS Studio",""," ","");
+movieArray04[4]= new Array("evyov5204_0_e","html","Step 4: Explore and Visualize Data with SAS Visual Analytics",""," ","");
+movieArray04[5]= new Array("evyov5204_0_f","html","Step 5: Build Models with SAS Model Studio",""," ","");
+ 
+var movieArray05=new Array();
+movieArray05[0]= new Array("evyov5205_0_a","vid","Lesson Overview","1:52"," ","6386044399112");
+movieArray05[1]= new Array("evyov5205_1_ademo","vid","Demo: Create Custom Steps with SAS Studio","16:42"," ","6386044822112");
+movieArray05[2]= new Array("evyov5205_1_bdemo","vid","Demo: Git Integration with SAS Studio","11:41"," ","6386044912112");
+movieArray05[3]= new Array("evyov5205_2_a","vid","What Is SAS Environment Manager?","0:42"," ","6386045292112");
+movieArray05[4]= new Array("evyov5205_2_bdemo","vid","Demo: Manage Environment with SAS Environment Manager","12:47"," ","6386045095112");
+movieArray05[5]= new Array("evyov5205_3_a","vid","What Is SAS Model Manager?","0:54"," ","6386045386112");
+movieArray05[6]= new Array("evyov5205_3_bdemo","vid","Demo: Manage Models with SAS Model Manager","7:16"," ","6386045783112");
+movieArray05[7]= new Array("evyov5205_4_a","vid","What Is SAS Intelligent Decisioning?","1:11"," ","6386044017112");
+movieArray05[8]= new Array("evyov5205_4_bdemo","vid","Demo: Build Decisions with SAS Intelligent Decisioning","19:32"," ","6386043541112");
+movieArray05[9]= new Array("evyov5205_5_a","vid","What Is SAS Event Stream Processing?","0:56"," ","6386045385112");
+movieArray05[10]= new Array("evyov5205_5_bdemo","vid","Demo: Streaming Analytics with SAS Event Stream Processing","9:34"," ","6386044398112");
+movieArray05[11]= new Array("evyov5205_6_a","vid","What Is SAS Viya Workbench?","2:02"," ","6386044321112");
+movieArray05[12]= new Array("evyov5205_6_bdemo","vid","Demo: Developing Code with SAS Viya Workbench","12:21"," ","6386044706112");
+movieArray05[13]= new Array("evyov5205_6_c","html","SAS Extension for Visual Studio Code",""," ","");
+ 
