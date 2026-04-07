@@ -1,5 +1,9 @@
 # Demo: Explore and Visualize with SAS Visual Analytics
 
+1. If necessary, from the Desktop, open Google Chrome and click on the **SAS Viya** bookmark.
+
+1. If necessary, log on to SAS Viya using the credentials **Student** and **Metadata0**.
+
 1. To open Visual Analytics, click the **Applications** menu in the upper left corner and select **Explore and Visualize**.
 
 ## Access Data
@@ -78,7 +82,7 @@
 
 ## Save and View the Report
 
-1. Click <img src='./images/Save.svg' height="10px"> </img> (**Save**) and select **My Folder**. Name the report **Home Equity Report** and click **Save**. The report is currently in Edit mode, so click the **View report** button in the upper left corner. Select the **Loan Exploration** page and confirm that all the charts update as you select each region. Select the **Geo Analysis** page and verify that the map updates as you select a bar representing a particular geographic area.
+1. Click <img src='./images/Save.svg' height="10px"> </img> (**Save**) and select **My Folder**. Name the report **Home Equity Report** and click **Save**. Replace the report if necessary. The report is currently in Edit mode, so click the **View report** button in the upper left corner. Select the **Loan Exploration** page and confirm that all the charts update as you select each region. Select the **Geo Analysis** page and verify that the map updates as you select a bar representing a particular geographic area.
 
 1. In the upper right corner of Visual Analytics, select **Opened reports** and click **Close all reports**.
 
