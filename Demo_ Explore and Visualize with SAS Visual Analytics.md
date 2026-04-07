@@ -20,7 +20,7 @@
 
 1. The Data pane displays all the columns, or data items, in the **HOMEEQUITY** table. Data items are organized by type. Character columns and numeric columns with a date format appear as categories. Distinct counts appear next to each category. Numeric variables appear as measures.
 
-1. You may also see other icons next to data items. Previously, we analyzed this table in SAS Information Catalog. In that application, columns with potentially private information were flagged as *Private*, *Sensitive*, or *Candidate*. Those information privacy indicators are displayed in Visual Analytics. For example, the icon next to **City** indicates that it has been flagged as *Candidate*, meaning that values could be used to identify individuals if combined with other information. The icons next to the Measure data items indicate that outliers may impact aggregation statistics.
+1. You may also see other icons next to data items. If you had analyzed this table in SAS Information Catalog, columns might be flagged as *Private*, *Sensitive*, or *Candidate*. Those information privacy indicators are displayed in Visual Analytics. The icons next to the Measure data items indicate that outliers may impact aggregation statistics.
 
 ## Prepare Data
 
