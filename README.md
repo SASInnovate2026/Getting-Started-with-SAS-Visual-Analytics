@@ -1,5 +1,5 @@
 # Getting-Started-with-SAS-Visual-Analytics
-Getting Started with SAS®  Visual Analytics
+This hands-on workshop shows you how to explore and visualize data with SAS® Visual Analytics. You learn how to access and prepare data, how to create interactive charts, reports, and maps to learn about your data, and how to build a preliminary predictive model.
 
 ## Important Information
 
